@@ -5,6 +5,9 @@
 
 > Un proyecto de investigación no necesita abandonar su identidad para dialogar con un Framework. En esta prueba, Biblioteca Viva permanece reconocible y el Framework llega como acompañante trazable, reversible y gobernado por personas.
 
+
+> 📚 **Documentación canónica activa:** [índice](18_DOCUMENTACION_ACTIVA/README.md) · [bitácora](18_DOCUMENTACION_ACTIVA/Cierres_Reportes/Bitacoras/2026-10-16_Bitacora_BIVA_INTEGRATE.md) · [continuidad](18_DOCUMENTACION_ACTIVA/Primers_Continuidad/2026-10-16_Continuidad_BIVA_INTEGRATE.md) · [índice de cierres](18_DOCUMENTACION_ACTIVA/Cierres_Reportes/Cierres_Sesion/README.md). El cierre fuerte integral está bajo custodia y pendiente de autorización de publicación.
+
 ## 📍 Estado de situación · INTEGRATE V5.2
 **Corte documental: 16 de octubre de 2026 · Repositorio modelo / rama `main`**
 
@@ -17,7 +20,7 @@
 | Integración paralela | ✅ Configurada | [`activation.json`](integrate-v5.2/activation.json), sin intervención del origen |
 | Lentes PH · IT · AT | ✅ Tres declaradas activas | Falta demostrar y documentar su operación y resultados |
 | Ejecución efectiva | ⚪ Desactivada | `enabled: false`, `dry_run: true`, `production_write: false` |
-| Documentación | ✅ Habilitada | [Bitácora](integrate-v5.2/bitacora.md) y [guía](integrate-v5.2/README.md); mantenerlas al día requiere registrar cada ejecución |
+| Documentación | ✅ Habilitada | [Bitácora canónica](18_DOCUMENTACION_ACTIVA/Cierres_Reportes/Bitacoras/2026-10-16_Bitacora_BIVA_INTEGRATE.md) y [guía](integrate-v5.2/README.md); mantenerlas al día requiere registrar cada ejecución |
 | N3 · integración avanzada | 🟡 Meta declarada | Validación técnica, trazabilidad, pruebas reproducibles y aprobación humana pendientes |
 | N4 · ecosistema gobernado | 🔒 No acreditado | Evidencia de gobernanza, recuperación, continuidad y transferencia pendiente |
 | Pruebas del snapshot | ⚪ No ejecutadas en esta integración | El script está disponible; no hay resultados verificables de ejecución |
@@ -49,7 +52,7 @@ MADUREZ N4         [OBJETIVO]    evaluación y gobernanza pendientes
 - 🧪 [Rama de montaje experimental](https://github.com/ricardojuanmorales/eugenia-lab-aplicacion-agentica-1/tree/poc/biva-source-verified-integrate-v52-n3-n4)
 - 🧬 [Framework Genérico 5.2.0](https://github.com/ricardojuanmorales/framework-proyecto-generico-ia-1)
 - 🌐 [Aplicación BIVA de referencia](https://web-beta-hazel-49.vercel.app)
-- 🗂️ [Configuración INTEGRATE](integrate-v5.2/activation.json) · [Bitácora](integrate-v5.2/bitacora.md) · [Guía del montaje](integrate-v5.2/README.md)
+- 🗂️ [Configuración INTEGRATE](integrate-v5.2/activation.json) · [Bitácora canónica](18_DOCUMENTACION_ACTIVA/Cierres_Reportes/Bitacoras/2026-10-16_Bitacora_BIVA_INTEGRATE.md) · [Guía del montaje](integrate-v5.2/README.md)
 
 ```text
 framework: 5.2.0

@@ -1,3 +1,9 @@
+# Bitácora histórica · ubicación anterior
+
+El contenido registrado inicialmente en este archivo queda preservado debajo como **registro histórico inmutable de referencia**. Nuevas entradas se escriben en la [bitácora canónica](../18_DOCUMENTACION_ACTIVA/Cierres_Reportes/Bitacoras/2026-10-16_Bitacora_BIVA_INTEGRATE.md).
+
+---
+
 # Bitácora activa | 2026-10-16
 
 | Evento | Evidencia | Resultado | Pendiente |
