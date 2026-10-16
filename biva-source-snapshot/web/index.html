@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Viva · Organiza tu investigación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --forest:#1F4620;
+    --forest-deep:#14301A;
+    --moss:#5B8C3E;
+    --moss-light:#BFD9A8;
+    --moss-pale:#EAF2E2;
+    --cream:#FBFAF6;
+    --ink:#24301F;
+    --ink-soft:#4A5842;
+    --accent:#8A5A2B;
+    --accent-pale:#F0E4D3;
+    --card:#FFFFFF;
+    --danger:#A23B2E;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  #app{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:var(--cream);
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    color:var(--forest);
+    margin:0 0 0.4em 0;
+    line-height:1.15;
+  }
+  p{line-height:1.55;}
+  .header{
+    background:linear-gradient(160deg,var(--forest) 0%,var(--forest-deep) 100%);
+    color:#fff;
+    padding:22px 20px 18px 20px;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .header .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .brand-main{display:flex;align-items:center;gap:10px;min-width:0;}
+  .mode-switch{margin-left:auto;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:8px;padding:7px 9px;font:600 11px 'Inter',sans-serif;cursor:pointer;white-space:nowrap;}
+  .brand .leaf{
+    width:26px;height:26px;flex-shrink:0;
+  }
+  .brand-text h1{
+    color:#fff;
+    font-size:20px;
+    margin:0;
+  }
+  .brand-text .tag{
+    font-size:12px;
+    color:var(--moss-light);
+    font-style:italic;
+  }
+  .vine{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    overflow-x:auto;
+    padding-bottom:2px;
+  }
+  .vine::-webkit-scrollbar{display:none;}
+  .vine-node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex-shrink:0;
+    width:34px;
+  }
+  .vine-line{
+    height:2px;
+    flex:1;
+    background:rgba(255,255,255,0.25);
+    min-width:8px;
+  }
+  .vine-line.filled{background:var(--moss-light);}
+  .leaf-dot{
+    width:16px;height:16px;
+    border-radius:50% 0 50% 50%;
+    transform:rotate(-45deg);
+    border:2px solid rgba(255,255,255,0.4);
+    background:transparent;
+    transition:all .25s ease;
+  }
+  .leaf-dot.done{background:var(--moss-light);border-color:var(--moss-light);}
+  .leaf-dot.current{background:#fff;border-color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,0.18);}
+  .step-label{
+    margin-top:10px;
+    font-size:13px;
+    color:var(--moss-light);
+    font-weight:500;
+  }
+  .step-label b{color:#fff;}
+
+  main{
+    flex:1;
+    padding:20px 20px 100px 20px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 14px rgba(31,70,32,0.08);
+  }
+  .card.tint{background:var(--moss-pale);box-shadow:none;}
+  .card.accent{background:var(--accent-pale);box-shadow:none;}
+  label{
+    display:block;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--forest);
+    margin:14px 0 6px 0;
+  }
+  label:first-child{margin-top:0;}
+  input[type=text],textarea,select{
+    width:100%;
+    border:1.5px solid #DCE5D5;
+    border-radius:10px;
+    padding:11px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    background:#fff;
+    resize:vertical;
+  }
+  textarea{min-height:70px;}
+  input:focus,textarea:focus,select:focus{
+    outline:none;
+    border-color:var(--moss);
+    box-shadow:0 0 0 3px rgba(91,140,62,0.15);
+  }
+  .hint{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:none;
+    border-radius:11px;
+    padding:13px 20px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .1s ease, opacity .15s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--forest);color:#fff;width:100%;}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--forest);border:1.5px solid var(--moss-light);}
+  .btn-accent{background:var(--accent);color:#fff;}
+  .btn-row{display:flex;gap:10px;margin-top:18px;}
+  .btn-row .btn{flex:1;}
+  .chip{
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:600;
+    background:var(--moss-pale);
+    color:var(--forest);
+    margin:0 6px 6px 0;
+  }
+  .chip.rejected{background:#F5E4E0;color:var(--danger);}
+  .chip.pending{background:var(--accent-pale);color:var(--accent);}
+  .option-card{
+    border:1.5px solid #DCE5D5;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .option-card:hover{border-color:var(--moss);}
+  .option-card.selected{border-color:var(--moss);background:var(--moss-pale);}
+  .option-card h3{font-size:15.5px;margin-bottom:4px;}
+  .option-card p{font-size:13.5px;color:var(--ink-soft);margin:0;}
+  .ref-item{
+    border:1.5px solid #DCE5D5;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .ref-item .ref-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .ref-item h3{font-size:15px;margin-bottom:2px;}
+  .ref-item .meta{font-size:12.5px;color:var(--ink-soft);}
+  .status-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+  .status-btn{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:8px;
+    border:1.5px solid #DCE5D5;
+    background:#fff;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .status-btn.active-accepted{background:var(--moss);color:#fff;border-color:var(--moss);}
+  .status-btn.active-rejected{background:var(--danger);color:#fff;border-color:var(--danger);}
+  .status-btn.active-pending{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .loading{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px;
+    background:var(--moss-pale);
+    border-radius:12px;
+    font-size:14px;
+    color:var(--forest);
+    font-weight:500;
+  }
+  .spinner{
+    width:16px;height:16px;
+    border:2.5px solid var(--moss-light);
+    border-top-color:var(--forest);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .footer-nav{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    max-width:520px;
+    margin:0 auto;
+    background:var(--cream);
+    border-top:1px solid #E4DFCF;
+    padding:12px 20px;
+    display:flex;
+    gap:10px;
+  }
+  .empty{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--ink-soft);
+  }
+  .small-btn{
+    font-size:13px;
+    color:var(--forest);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+  .field-row{display:flex;gap:8px;}
+  .field-row > *{flex:1;}
+  .ai-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:11.5px;font-weight:700;color:var(--moss);
+    text-transform:uppercase;letter-spacing:0.4px;
+    margin-bottom:8px;
+  }
+  .ai-badge svg{width:12px;height:12px;}
+  ul.plain{margin:0;padding-left:20px;}
+  ul.plain li{margin-bottom:6px;line-height:1.5;}
+  .divider{height:1px;background:#E4DFCF;margin:16px 0;}
+  .intro-hero{
+    text-align:center;
+    padding:10px 4px 4px 4px;
+  }
+  .intro-hero .leaf-big{width:56px;height:56px;margin-bottom:14px;}
+  .final-card{
+    background:var(--forest);
+    color:#fff;
+    border-radius:var(--radius);
+    padding:24px 20px;
+    text-align:center;
+  }
+  .final-card h2{color:#fff;}
+  .final-card p{color:var(--moss-light);}
+  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+  .mode-option{border:1.5px solid #DCE5D5;background:#fff;border-radius:10px;padding:16px;text-align:left;cursor:pointer;color:var(--ink);}
+  .mode-option:hover{border-color:var(--moss);background:var(--moss-pale);}
+  .mode-name{display:block;color:var(--accent);font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+  .mode-option strong{display:block;color:var(--forest);font-size:15px;margin-bottom:7px;}
+  .mode-option span{display:block;color:var(--ink-soft);font-size:12.5px;line-height:1.45;}
+  .mode-option .mode-route{margin-top:10px;padding-top:9px;border-top:1px solid #E4DFCF;color:var(--forest);font-weight:600;}
+  .finding{border-left:4px solid var(--moss);}
+  .finding.contradiccion{border-left-color:var(--accent);}
+  .finding.brecha{border-left-color:#476A8A;}
+  .finding-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .report-actions{display:flex;gap:10px;margin:16px 0;}
+  .report-actions .btn{flex:1;}
+  @media(max-width:400px){.mode-grid{grid-template-columns:1fr;}}
+  @media print{
+    body,#app{background:#fff;max-width:none;}
+    .header,.footer-nav,.report-actions{display:none!important;}
+    main{padding:0;max-width:900px;margin:0 auto;}
+    .card,.ref-item{box-shadow:none;break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const STAGES = [
+  {key:"idea", label:"Idea inicial", short:"Idea"},
+  {key:"friccion", label:"Fricción conceptual", short:"Fricción"},
+  {key:"pregunta", label:"Pregunta y objetivos", short:"Pregunta"},
+  {key:"mapa", label:"Componentes del trabajo", short:"Componentes"},
+  {key:"bibliografia", label:"Bibliografía viva", short:"Biblio"},
+  {key:"mde", label:"Matriz de Decisión", short:"Matriz"},
+  {key:"sintesis", label:"Síntesis de evidencia", short:"Síntesis"},
+  {key:"resultados", label:"Tus resultados", short:"Resultados"},
+  {key:"auditoria", label:"Auditoría de defendibilidad", short:"Auditoría"},
+  {key:"notas", label:"Notas de lectura", short:"Notas"},
+  {key:"divulgacion", label:"Divulgación", short:"Divulgar"},
+  {key:"reflexion", label:"Reflexión", short:"Reflexión"}
+];
+
+const LEAF_SVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7 2 3 6 3 12c0 5 4 9 9 10 5-1 9-5 9-10 0-6-4-10-9-10Z" fill="#BFD9A8"/><path d="M12 22V6" stroke="#1F4620" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+const AI_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6L12 2z" fill="currentColor"/></svg>';
+
+const STORAGE_KEY = "biblioteca_viva_project";
+
+/* ============ STATE ============ */
+let state = null;
+let loading = false;
+// Resultados de busqueda de articulos (transitorios, no se guardan en localStorage).
+// "meta" guarda, por componente, la consulta que se uso de verdad y que devolvio cada
+// base, para poder mostrarlo y registrarlo. Ver state.busquedas para el registro que si
+// se persiste.
+let searchState = { activo: null, resultados: {}, error: {}, meta: {} };
+// Ajustes de busqueda que el investigador puede editar por componente (transitorios).
+// "query" vacia significa "que la escriba EugenIA"; con texto, se usa tal cual.
+let searchControls = {};
+function getSearchControls(key){
+  if(!searchControls[key]) searchControls[key] = { query: "", desdeAnio: "", tipo: "", abierto: false };
+  return searchControls[key];
+}
+// Borrador de la ficha de lectura en construcción (transitorio, no se guarda en localStorage).
+let notaDraft = { refIdx: 0, idea: "", conceptos: "", relacion: "" };
+// Borrador de una referencia manual, prellenado por extracción de PDF o escrito a mano
+// (transitorio, no se guarda en localStorage). Nada pasa a state.bibliografia hasta
+// que el investigador pulse "Añadir referencia" explícitamente.
+let refDraft = { titulo: "", autores: "", anio: "", resumen: "" };
+// Estado de la extracción de PDF en curso (transitorio).
+let pdfExtractState = { activo: false, error: "" };
+let pdfjsLoadPromise = null;
+// Estado de la generación de borradores para publicar (transitorio). Vive aquí
+// porque el informe de evidencia se dibuja fuera del render() principal, así que
+// no puede apoyarse en la bandera global "loading" de callAgent.
+let borradoresState = { activo: false, error: "" };
+
+function truncar(str, n){
+  str = (str == null) ? "" : String(str);
+  return str.length > n ? str.slice(0, n).trim() + "…" : str;
+}
+
+function defaultProject(){
+  return {
+    id: "proj_" + Date.now(),
+    createdAt: new Date().toISOString(),
+    step: -1, // -1 = intro screen
+    mode: "guiado",
+    idea: {tema:"", porque:"", yaSe:"", noEntiendo:"", tension:"", abstract:""},
+    friccionOpciones: [],
+    friccion: {seleccion:"", notas:""},
+    pregunta: {problema:"", pregunta_principal:"", preguntas_secundarias:["",""], objetivo_general:"", objetivos_especificos:["",""], delimitaciones:""},
+    mapa: [],
+    bibliografia: [],
+    // Registro de cada busqueda ejecutada: fecha, componente, consulta exacta, bases
+    // consultadas y cuantos resultados dio cada una. Es lo que permite reconstruir
+    // despues como se armo el corpus, y alimenta el parrafo de metodos del informe.
+    busquedas: [],
+    reenfoque: null,
+    mde: [],
+    sintesis: [],
+    resultadosPropios: [],
+    auditoria: null,
+    notas: [],
+    borradores: null,
+    citaEstilo: "APA",
+    divulgacion: {formato:"", outline:null},
+    reflexion: {cambio:"", referencia:"", dificultad:"", usoIA:""}
+  };
+}
+
+// Rellena claves que falten en proyectos guardados antes de que existieran
+// (por ejemplo, "mde" se agregó después de que algunos usuarios ya tenían progreso).
+function migrateState(){
+  const def = defaultProject();
+  for(const k in def){
+    if(state[k] === undefined) state[k] = def[k];
+  }
+  for(const k in def.idea){
+    if(state.idea[k] === undefined) state.idea[k] = def.idea[k];
+  }
+  // Saneamiento de los dos campos que gobiernan el render. Un proyecto cargado desde un
+  // archivo (o un localStorage viejo) puede traer un "step" fuera de rango, y renderHeader
+  // hace STAGES[state.step].label: con un valor invalido la app se queda en blanco sin
+  // explicacion. Aqui se acota en vez de confiar en el dato.
+  const step = parseInt(state.step, 10);
+  state.step = (Number.isInteger(step) && step >= -1 && step < STAGES.length) ? step : -1;
+  if(state.mode !== "investigador" && state.mode !== "guiado") state.mode = "guiado";
+  // Estas tres siempre deben ser arreglos: el resto del codigo las recorre sin comprobar.
+  ["bibliografia","busquedas","mapa","mde","sintesis","resultadosPropios","notas"].forEach(k=>{
+    if(!Array.isArray(state[k])) state[k] = [];
+  });
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    state = raw ? JSON.parse(raw) : defaultProject();
+  }catch(e){
+    state = defaultProject();
+  }
+  migrateState();
+  render();
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.error("No se pudo guardar el progreso", e);
+  }
+}
+
+function resetProject(){
+  if(!confirm("¿Empezar un proyecto nuevo? Se perderá el progreso actual.")) return;
+  state = defaultProject();
+  saveState();
+  render();
+}
+
+/* ============ AI HELPER ============ */
+// Llama al backend propio (/api/generate), que a su vez llama a Claude con la
+// clave de la API guardada de forma segura en el servidor. Nunca se expone la clave.
+async function callAgent(task, payload){
+  loading = true; render();
+  try{
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({task, payload})
+    });
+    if(!response.ok){
+      let msg = "No se pudo generar la sugerencia.";
+      try{ const err = await response.json(); if(err && err.error) msg = err.error; }catch(e){}
+      throw new Error(msg);
+    }
+    const data = await response.json();
+    return data.result;
+  }catch(e){
+    console.error("Error llamando al agente:", e);
+    alert(e.message || "No se pudo generar la sugerencia. Revisa tu conexión e inténtalo de nuevo.");
+    return null;
+  }finally{
+    loading = false; render();
+  }
+}
+
+/* ============ NAVIGATION ============ */
+function goToStep(i){
+  state.step = i;
+  saveState();
+  render();
+  window.scrollTo(0,0);
+}
+function workflowStages(){
+  if(state.mode !== "investigador") return STAGES.map((s,i)=>i);
+  const keys = ["idea","mapa","bibliografia","mde","sintesis","resultados","auditoria","notas","divulgacion"];
+  return keys.map(k=>STAGES.findIndex(s=>s.key===k));
+}
+function nextStep(){
+  const flow = workflowStages();
+  const pos = flow.indexOf(state.step);
+  goToStep(flow[Math.min(pos+1, flow.length-1)]);
+}
+function prevStep(){
+  const flow = workflowStages();
+  const pos = flow.indexOf(state.step);
+  goToStep(flow[Math.max(pos-1, 0)]);
+}
+
+// Requisito minimo para poder avanzar de cada paso (los demas no bloquean).
+function stepComplete(i){
+  const k = STAGES[i].key;
+  if(k === "idea") {
+    const tema = !!(state.idea.tema && state.idea.tema.trim());
+    if(state.mode === "investigador") return tema && !!(state.pregunta.pregunta_principal && state.pregunta.pregunta_principal.trim());
+    return tema;
+  }
+  if(k === "friccion") return !!(state.friccion.seleccion && state.friccion.seleccion.trim());
+  if(k === "pregunta") return !!(state.pregunta.pregunta_principal && state.pregunta.pregunta_principal.trim());
+  return true;
+}
+function continueHint(i){
+  const k = STAGES[i].key;
+  if(k === "idea") return state.mode === "investigador" ? "Escribe el tema y la pregunta principal para continuar." : "Escribe al menos el tema para continuar.";
+  if(k === "friccion") return "Elige o escribe una fricción conceptual para continuar.";
+  if(k === "pregunta") return "Necesitas al menos la pregunta principal para continuar.";
+  return "";
+}
+// Actualiza el estado del boton Continuar sin re-renderizar (para no perder el foco al escribir).
+function refreshNav(){
+  const complete = stepComplete(state.step);
+  const nextBtn = document.getElementById("btnNext");
+  if(nextBtn) nextBtn.disabled = !complete;
+  const finishBtn = document.getElementById("btnFinish");
+  if(finishBtn) finishBtn.disabled = !complete;
+  const hintEl = document.getElementById("navHint");
+  if(hintEl) hintEl.style.display = complete ? "none" : "";
+}
+
+/* ============ RENDER SHELL ============ */
+function render(){
+  const app = document.getElementById("app");
+  if(!state){ app.innerHTML = "<div class='empty'>Cargando…</div>"; return; }
+
+  if(state.step === -1){
+    app.innerHTML = renderIntro();
+    attachIntroHandlers();
+    return;
+  }
+
+  app.innerHTML = `
+    ${renderHeader()}
+    <main>${renderStep(state.step)}</main>
+    ${renderFooterNav()}
+  `;
+  attachStepHandlers(state.step);
+}
+
+function renderHeader(){
+  const flow = workflowStages();
+  const currentPos = flow.indexOf(state.step);
+  const nodes = flow.map((stageIdx,pos) => {
+    const cls = pos < currentPos ? "done" : (stageIdx === state.step ? "current" : "");
+    const lineCls = pos < currentPos ? "filled" : "";
+    return `
+      ${pos>0 ? `<div class="vine-line ${lineCls}"></div>` : ""}
+      <div class="vine-node" data-step="${stageIdx}">
+        <div class="leaf-dot ${cls}"></div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+  <div class="header">
+    <div class="brand">
+      <div class="brand-main">
+        <div class="leaf">${LEAF_SVG}</div>
+        <div class="brand-text">
+          <h1>Biblioteca Viva</h1>
+          <div class="tag">${state.mode === "investigador" ? "Modo investigador · evidencia directa" : "Modo guiado · formulación paso a paso"}</div>
+        </div>
+      </div>
+      <button class="mode-switch" id="btnChangeMode">Cambiar modo</button>
+    </div>
+    <div class="vine">${nodes}</div>
+    <div class="step-label">Etapa ${currentPos+1} de ${flow.length} · <b>${STAGES[state.step].label}</b></div>
+  </div>`;
+}
+
+function renderFooterNav(){
+  const flow = workflowStages();
+  const isLast = state.step === flow[flow.length - 1];
+  const complete = stepComplete(state.step);
+  const backBtn = flow.indexOf(state.step) > 0
+    ? `<button class="btn btn-ghost" id="btnBack">Atrás</button>`
+    : `<button class="btn btn-ghost" id="btnHome">Inicio</button>`;
+  const fwdBtn = !isLast
+    ? `<button class="btn btn-primary" id="btnNext" ${complete?'':'disabled'}>Continuar</button>`
+    : `<button class="btn btn-primary" id="btnFinish" ${complete?'':'disabled'}>Ver resumen</button>`;
+  const hintText = continueHint(state.step);
+  return `
+  <div class="footer-nav" style="flex-direction:column;align-items:stretch;gap:0;">
+    <div class="hint" id="navHint" style="text-align:center;margin:0 0 8px 0;${complete?'display:none;':''}">${hintText}</div>
+    <div style="display:flex;gap:10px;">${backBtn}${fwdBtn}</div>
+  </div>`;
+}
+
+/* ============ INTRO ============ */
+function renderIntro(){
+  return `
+  <div class="header">
+    <div class="brand">
+      <div class="leaf">${LEAF_SVG}</div>
+      <div class="brand-text">
+        <h1>Biblioteca Viva</h1>
+        <div class="tag">Un compañero de investigación paso a paso</div>
+      </div>
+    </div>
+  </div>
+  <main>
+    <div class="intro-hero">
+      <h2>Fortalece tu investigación con la mejor evidencia</h2>
+      <p>Una herramienta para investigadores y estudiantes graduados: encuentra las fuentes que mejor sostienen cada parte de tu trabajo, y tradúcelas en criterios de decisión con la Matriz de Decisión. Sirve igual para empezar un proyecto o para reforzar uno en curso.</p>
+    </div>
+    <div style="margin-top:18px;">
+      <h3 style="font-size:18px;margin-bottom:4px;">¿Cómo quieres comenzar?</h3>
+      <p style="font-size:13.5px;color:var(--ink-soft);margin:0;">Escoge según lo que ya tienes. Ambos modos llegan al mismo motor de evidencia.</p>
+    </div>
+    <div class="mode-grid">
+      <button class="mode-option" id="btnResearcher">
+        <span class="mode-name">Modo investigador</span>
+        <strong>Ya tengo una pregunta, propuesta o abstract</strong>
+        <span>Para proyectos en curso. Entras con tu material existente y omites la formulación básica.</span>
+        <span class="mode-route">Pregunta o abstract → evidencia → decisiones</span>
+      </button>
+      <button class="mode-option" id="btnGuided">
+        <span class="mode-name">Modo guiado</span>
+        <strong>Todavía estoy definiendo mi investigación</strong>
+        <span>Para quien comienza con un tema. EugenIA ayuda a construir la fricción, la pregunta y los objetivos.</span>
+        <span class="mode-route">Idea → pregunta → evidencia → decisiones</span>
+      </button>
+    </div>
+    <div class="card">
+      <p style="font-size:13.5px;color:var(--ink-soft);margin:0;">Tu progreso se guarda automáticamente en este dispositivo. Puedes cerrar la app y volver cuando quieras.</p>
+    </div>
+  </main>`;
+}
+
+function attachIntroHandlers(){
+  document.getElementById("btnResearcher").onclick = () => {
+    state.mode = "investigador";
+    saveState();
+    goToStep(STAGES.findIndex(s=>s.key==="idea"));
+  };
+  document.getElementById("btnGuided").onclick = () => {
+    state.mode = "guiado";
+    saveState();
+    goToStep(STAGES.findIndex(s=>s.key==="idea"));
+  };
+}
+
+/* ============ STEP DISPATCH ============ */
+function renderStep(i){
+  const key = STAGES[i].key;
+  if(loading){
+    return renderLoadingCard();
+  }
+  switch(key){
+    case "idea": return renderIdea();
+    case "friccion": return renderFriccion();
+    case "pregunta": return renderPregunta();
+    case "mapa": return renderMapa();
+    case "bibliografia": return renderBibliografia();
+    case "mde": return renderMDE();
+    case "sintesis": return renderSintesis();
+    case "resultados": return renderResultados();
+    case "auditoria": return renderAuditoria();
+    case "notas": return renderNotas();
+    case "divulgacion": return renderDivulgacion();
+    case "reflexion": return renderReflexion();
+    default: return "";
+  }
+}
+
+function renderLoadingCard(){
+  return `<div class="loading"><div class="spinner"></div> EugenIA está pensando en tu proyecto…</div>`;
+}
+
+/* ============ STEP 1: IDEA ============ */
+function renderIdea(){
+  const d = state.idea;
+  if(state.mode === "investigador"){
+    return `
+    <div class="card">
+      <div class="ai-badge">Entrada rápida de investigador</div>
+      <label>Tema o título de trabajo</label>
+      <input type="text" id="f_tema" value="${escapeAttr(d.tema)}" placeholder="Ej. optimización de extracción de compuestos fenólicos">
+      <label>Pregunta principal</label>
+      <textarea id="fast_pregunta" placeholder="Pega o escribe la pregunta que quieres fortalecer">${escapeHtml(state.pregunta.pregunta_principal)}</textarea>
+      <label>Abstract o descripción del proyecto</label>
+      <textarea id="f_abstract" style="min-height:150px;" placeholder="Opcional. Pega tu abstract, propuesta o contexto disponible para mejorar el mapa de evidencia.">${escapeHtml(d.abstract)}</textarea>
+      <label>Objetivo general</label>
+      <textarea id="fast_objetivo" placeholder="Opcional">${escapeHtml(state.pregunta.objetivo_general)}</textarea>
+      <p class="hint">EugenIA usará este contexto para identificar qué evidencia necesita cada parte del trabajo. Podrás revisar todo antes de buscar.</p>
+    </div>`;
+  }
+  return `
+  <div class="card">
+    <label>¿Qué tema te interesa investigar?</label>
+    <input type="text" id="f_tema" value="${escapeAttr(d.tema)}" placeholder="Ej. propiedades del orégano brujo">
+    <label>¿Por qué te interesa?</label>
+    <textarea id="f_porque" placeholder="Tu motivación personal o académica">${escapeHtml(d.porque)}</textarea>
+    <label>¿Qué crees que ya sabes sobre el tema?</label>
+    <textarea id="f_yaSe">${escapeHtml(d.yaSe)}</textarea>
+    <label>¿Qué no entiendes todavía?</label>
+    <textarea id="f_noEntiendo">${escapeHtml(d.noEntiendo)}</textarea>
+    <label>¿Qué contradicción, duda o problema te llama la atención?</label>
+    <textarea id="f_tension" placeholder="Opcional, si ya tienes una intuición">${escapeHtml(d.tension)}</textarea>
+  </div>`;
+}
+
+function attachIdeaHandlers(){
+  ["tema","porque","yaSe","noEntiendo","tension"].forEach(k=>{
+    const el = document.getElementById("f_"+k);
+    if(el) el.oninput = () => { state.idea[k] = el.value; saveState(); refreshNav(); };
+  });
+  const abstractEl = document.getElementById("f_abstract");
+  if(abstractEl) abstractEl.oninput = () => { state.idea.abstract = abstractEl.value; saveState(); };
+  const preguntaEl = document.getElementById("fast_pregunta");
+  if(preguntaEl) preguntaEl.oninput = () => { state.pregunta.pregunta_principal = preguntaEl.value; saveState(); refreshNav(); };
+  const objetivoEl = document.getElementById("fast_objetivo");
+  if(objetivoEl) objetivoEl.oninput = () => { state.pregunta.objetivo_general = objetivoEl.value; saveState(); };
+}
+
+/* ============ STEP 2: FRICCIÓN ============ */
+function renderFriccion(){
+  const d = state.friccion;
+  const hasOptions = state.friccionOpciones && state.friccionOpciones.length > 0;
+  const temaListo = !!(state.idea.tema && state.idea.tema.trim());
+  return `
+  ${!hasOptions ? `
+    <div class="card">
+      <p>Con base en tu idea inicial, EugenIA puede sugerir posibles tensiones (fricciones conceptuales) que justifiquen una investigación.</p>
+      ${!temaListo ? `<p class="hint">Primero completa al menos el <b>tema</b> en el paso "Idea inicial" para poder generar sugerencias.</p>` : ``}
+      <button class="btn btn-accent" id="btnSugerirFriccion" style="width:100%;" ${!temaListo?'disabled':''}>Sugerir fricciones conceptuales</button>
+    </div>
+  ` : `
+    <div class="ai-badge">${AI_ICON} Sugerido por EugenIA</div>
+    ${state.friccionOpciones.map((op,i)=>`
+      <div class="option-card ${d.seleccion===op.titulo?'selected':''}" data-idx="${i}">
+        <h3>${escapeHtml(op.titulo)}</h3>
+        <p>${escapeHtml(op.descripcion)}</p>
+      </div>
+    `).join("")}
+    <button class="btn btn-ghost" id="btnRegenerar" style="width:100%;margin-bottom:6px;">Generar otras opciones</button>
+  `}
+  <div class="card" style="margin-top:14px;">
+    <label>Fricción conceptual elegida (puedes editarla)</label>
+    <textarea id="f_seleccion" placeholder="Escribe o ajusta la tensión que sostendrá tu investigación">${escapeHtml(d.seleccion)}</textarea>
+    <label>Notas adicionales</label>
+    <textarea id="f_notas">${escapeHtml(d.notas)}</textarea>
+  </div>`;
+}
+
+function attachFriccionHandlers(){
+  const btn = document.getElementById("btnSugerirFriccion");
+  if(btn) btn.onclick = sugerirFricciones;
+  const btnRegen = document.getElementById("btnRegenerar");
+  if(btnRegen) btnRegen.onclick = sugerirFricciones;
+
+  document.querySelectorAll(".option-card").forEach(card=>{
+    card.onclick = () => {
+      const idx = parseInt(card.dataset.idx);
+      const op = state.friccionOpciones[idx];
+      state.friccion.seleccion = op.titulo + ": " + op.descripcion;
+      saveState(); render();
+    };
+  });
+  const selEl = document.getElementById("f_seleccion");
+  if(selEl) selEl.oninput = () => { state.friccion.seleccion = selEl.value; saveState(); refreshNav(); };
+  const notasEl = document.getElementById("f_notas");
+  if(notasEl) notasEl.oninput = () => { state.friccion.notas = notasEl.value; saveState(); };
+}
+
+async function sugerirFricciones(){
+  if(!state.idea.tema || !state.idea.tema.trim()){
+    alert("Primero escribe al menos el tema en el paso 'Idea inicial'.");
+    return;
+  }
+  const result = await callAgent("friccion", {idea: state.idea});
+  if(result && Array.isArray(result)){
+    state.friccionOpciones = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ STEP 3: PREGUNTA Y OBJETIVOS ============ */
+function renderPregunta(){
+  const d = state.pregunta;
+  const hasDraft = d.problema && d.problema.length > 0;
+  return `
+  ${!hasDraft ? `
+    <div class="card">
+      <p>EugenIA puede convertir tu fricción conceptual en un problema investigable, una pregunta principal y objetivos.</p>
+      <button class="btn btn-accent" id="btnGenerarPregunta" style="width:100%;">Redactar pregunta y objetivos</button>
+    </div>
+  ` : `<div class="ai-badge">${AI_ICON} Borrador de EugenIA, edítalo libremente</div>`}
+  <div class="card">
+    <label>Problema investigable</label>
+    <textarea id="f_problema">${escapeHtml(d.problema)}</textarea>
+    <label>Pregunta principal</label>
+    <textarea id="f_pregunta_principal">${escapeHtml(d.pregunta_principal)}</textarea>
+    <label>Preguntas secundarias</label>
+    <input type="text" id="f_ps0" value="${escapeAttr(d.preguntas_secundarias[0]||'')}" placeholder="Pregunta secundaria 1">
+    <input type="text" id="f_ps1" value="${escapeAttr(d.preguntas_secundarias[1]||'')}" placeholder="Pregunta secundaria 2" style="margin-top:8px;">
+    <label>Objetivo general</label>
+    <textarea id="f_objetivo_general">${escapeHtml(d.objetivo_general)}</textarea>
+    <label>Objetivos específicos</label>
+    <input type="text" id="f_oe0" value="${escapeAttr(d.objetivos_especificos[0]||'')}" placeholder="Objetivo específico 1">
+    <input type="text" id="f_oe1" value="${escapeAttr(d.objetivos_especificos[1]||'')}" placeholder="Objetivo específico 2" style="margin-top:8px;">
+    <label>Delimitaciones</label>
+    <textarea id="f_delimitaciones">${escapeHtml(d.delimitaciones)}</textarea>
+  </div>
+  ${hasDraft ? `<button class="btn btn-ghost" id="btnRegenerarPregunta" style="width:100%;margin-top:4px;">Generar otro borrador</button>` : ""}
+  `;
+}
+
+function attachPreguntaHandlers(){
+  const btn = document.getElementById("btnGenerarPregunta");
+  if(btn) btn.onclick = generarPregunta;
+  const btnR = document.getElementById("btnRegenerarPregunta");
+  if(btnR) btnR.onclick = generarPregunta;
+
+  const map = {
+    f_problema:"problema", f_pregunta_principal:"pregunta_principal",
+    f_objetivo_general:"objetivo_general", f_delimitaciones:"delimitaciones"
+  };
+  Object.keys(map).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.oninput = () => { state.pregunta[map[id]] = el.value; saveState(); refreshNav(); };
+  });
+  ["f_ps0","f_ps1"].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el) el.oninput = () => { state.pregunta.preguntas_secundarias[i] = el.value; saveState(); };
+  });
+  ["f_oe0","f_oe1"].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el) el.oninput = () => { state.pregunta.objetivos_especificos[i] = el.value; saveState(); };
+  });
+}
+
+async function generarPregunta(){
+  const result = await callAgent("pregunta", {
+    idea: state.idea,
+    friccionSeleccion: state.friccion.seleccion
+  });
+  if(result){
+    state.pregunta = {...state.pregunta, ...result};
+    saveState();
+  }
+  render();
+}
+
+/* ============ STEP 4: COMPONENTES DEL TRABAJO ============ */
+function renderMapa(){
+  const hasMap = state.mapa && state.mapa.length > 0;
+  return `
+  ${!hasMap ? `
+    <div class="card">
+      <p>Antes de salir a buscar literatura, EugenIA identifica los componentes de tu manuscrito y qué evidencia necesita cada uno para sostenerse.</p>
+      <button class="btn btn-accent" id="btnGenerarMapa" style="width:100%;">Identificar componentes del trabajo</button>
+    </div>
+  ` : `
+    <div class="ai-badge">${AI_ICON} Sugerido por EugenIA</div>
+    ${state.mapa.map((m,i)=>`
+      <div class="card tint">
+        <h3 style="font-size:15px;">${escapeHtml(m.perspectiva)}</h3>
+        <p style="font-size:14px;margin:0;">${escapeHtml(m.que_necesito)}</p>
+      </div>
+    `).join("")}
+    <button class="btn btn-ghost" id="btnRegenerarMapa" style="width:100%;margin-top:4px;">Regenerar componentes</button>
+  `}`;
+}
+
+function attachMapaHandlers(){
+  const btn = document.getElementById("btnGenerarMapa");
+  if(btn) btn.onclick = generarMapa;
+  const btnR = document.getElementById("btnRegenerarMapa");
+  if(btnR) btnR.onclick = generarMapa;
+}
+
+async function generarMapa(){
+  const result = await callAgent("mapa", {
+    idea: state.idea,
+    pregunta: state.pregunta
+  });
+  if(result && Array.isArray(result)){
+    state.mapa = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ STEP 5: BIBLIOGRAFÍA VIVA ============ */
+function renderBibliografia(){
+  const refs = state.bibliografia;
+  const mapa = state.mapa || [];
+  return `
+  ${mapa.length === 0 ? `
+    <div class="card tint">
+      <p style="margin:0;">Para que EugenIA te proponga artículos base, primero identifica los <b>componentes del trabajo</b> en el paso anterior. Aun así puedes añadir referencias manualmente más abajo.</p>
+    </div>
+  ` : `
+    <div class="ai-badge">${AI_ICON} Resultados científicos evaluados por EugenIA</div>
+    <div class="card tint" style="padding:14px;margin-bottom:12px;">
+      <p style="font-size:13.5px;margin:0 0 7px 0;"><b>Fuentes consultadas directamente:</b> OpenAlex, Europe PMC y Crossref.</p>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin:0;">Las tres se consultan en paralelo y sus resultados se intercalan y deduplican por DOI, así que ninguna domine. Europe PMC ya indexa MEDLINE y PubMed, por eso no se consulta PubMed por separado. Scopus, Web of Science y Google Scholar todavía no están integrados.</p>
+    </div>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 12px 0;">Busca artículos reales para apoyar cada componente del trabajo. EugenIA evalúa su ajuste al proyecto; tú decides cuáles aceptar.</p>
+    ${mapa.map((m,i)=>renderPerspectivaBusqueda(m,i)).join("")}
+    <div class="divider"></div>
+  `}
+
+  <div class="card">
+    <h3 style="font-size:15px;">Añadir una referencia manual</h3>
+    <p class="hint" style="margin:0 0 8px 0;">¿Ya tienes el PDF de un artículo (por ejemplo, de una base pagada a la que tienes acceso)? Súbelo y EugenIA intenta leer título, autores, año y resumen por ti.</p>
+    <input type="file" id="ref_pdf" accept="application/pdf" style="margin-bottom:8px;">
+    <button class="btn btn-ghost" id="btnExtraerPdf" type="button" style="width:100%;">${AI_ICON} Leer datos del PDF</button>
+    ${pdfExtractState.activo ? `<div class="loading" style="margin-top:8px;"><div class="spinner"></div> Leyendo el PDF…</div>` : ""}
+    ${pdfExtractState.error ? `<p class="hint" style="color:var(--danger);margin-top:8px;">${escapeHtml(pdfExtractState.error)}</p>` : ""}
+    <div class="divider" style="margin:14px 0;"></div>
+    <label>Título</label>
+    <input type="text" id="ref_titulo" value="${escapeAttr(refDraft.titulo)}" placeholder="Título del artículo o libro">
+    <div class="field-row" style="margin-top:8px;">
+      <div><label>Autores</label><input type="text" id="ref_autores" value="${escapeAttr(refDraft.autores)}"></div>
+      <div><label>Año</label><input type="text" id="ref_anio" value="${escapeAttr(refDraft.anio)}"></div>
+    </div>
+    <label>Resumen (si lo tienes; ayuda a que la Matriz de Decisión y la Síntesis usen esta fuente igual que las encontradas por búsqueda)</label>
+    <textarea id="ref_resumen">${escapeHtml(refDraft.resumen)}</textarea>
+    <label>¿Por qué podría servir a tu proyecto?</label>
+    <textarea id="ref_justificacion" placeholder="Justificación breve"></textarea>
+    <button class="btn btn-primary" id="btnAddRef" style="width:100%;margin-top:12px;">Añadir referencia</button>
+  </div>
+
+  <h3 style="font-size:15px;margin:6px 0 10px 0;">Mi bibliografía</h3>
+  ${refs.length === 0 ? `<div class="empty">Aún no has añadido referencias.</div>` : refs.map((r,i)=>`
+    <div class="ref-item">
+      <div class="ref-top">
+        <div>
+          <h3>${escapeHtml(r.titulo)}</h3>
+          <div class="meta">${escapeHtml(r.autores||'')} ${r.anio?('· '+escapeHtml(r.anio)):''}${typeof r.citas==='number'?(' · '+r.citas+' citas'):''}</div>
+        </div>
+      </div>
+      ${r.perspectiva ? `<div style="margin-top:8px;"><span class="chip">${escapeHtml(r.perspectiva)}</span></div>` : ""}
+      ${signalChips(r)}
+      ${r.justificacion ? `<p style="font-size:13.5px;margin:8px 0 0 0;">${escapeHtml(r.justificacion)}</p>` : ""}
+      ${r.url ? `<a class="small-btn" href="${escapeAttr(r.url)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;">Ver fuente</a>` : ""}
+      <div class="status-row">
+        <button class="status-btn ${r.estado==='aceptada'?'active-accepted':''}" data-i="${i}" data-estado="aceptada">Aceptar</button>
+        <button class="status-btn ${r.estado==='pendiente'?'active-pending':''}" data-i="${i}" data-estado="pendiente">Pendiente</button>
+        <button class="status-btn ${r.estado==='rechazada'?'active-rejected':''}" data-i="${i}" data-estado="rechazada">Rechazar</button>
+      </div>
+    </div>
+  `).join("")}
+  ${renderReenfoque()}`;
+}
+
+/* ============ REENFOQUE (dentro de Bibliografía) ============ */
+// Permite reformular el foco de la investigación a partir de los artículos que el
+// investigador realmente aceptó, aunque impliquen un giro respecto al foco original.
+// La IA propone; el investigador adopta o conserva el original (nunca sobreescribe solo).
+function renderReenfoque(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(aceptadas.length < 2) return "";
+  const p = state.reenfoque;
+  const gen = `
+    <div class="card accent" style="margin-top:16px;">
+      <h3 style="font-size:15px;margin:0 0 6px 0;">¿Tu lectura cambió tu enfoque?</h3>
+      <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 12px 0;">A veces los artículos que más te interesan apuntan a una pregunta distinta de la que empezaste. EugenIA puede proponerte un enfoque reformulado a partir de las ${aceptadas.length} referencias que aceptaste. Tú decides si lo adoptas o conservas el original.</p>
+      <button class="btn btn-accent" id="btnReenfocar" style="width:100%;">${p?"Proponer otro enfoque":"Reenfocar desde mis artículos"}</button>
+    </div>`;
+  if(!p) return gen;
+  const chips = (Array.isArray(p.fuentes)?p.fuentes:[])
+    .map(n=>aceptadas[n-1]).filter(Boolean)
+    .map(r=>{
+      const u = refUrl(r); const et = escapeHtml(truncar(r.titulo,55));
+      return u
+        ? `<a href="${escapeAttr(u)}" target="_blank" rel="noopener" style="display:inline-block;font-size:12px;background:var(--moss-light);color:var(--forest);border-radius:10px;padding:3px 9px;margin:3px 4px 0 0;text-decoration:none;">${et}</a>`
+        : `<span style="display:inline-block;font-size:12px;background:var(--moss-light);color:var(--forest);border-radius:10px;padding:3px 9px;margin:3px 4px 0 0;">${et}</span>`;
+    }).join("");
+  const objs = (Array.isArray(p.objetivos_especificos)?p.objetivos_especificos:[])
+    .map(o=>`<li>${escapeHtml(o)}</li>`).join("");
+  return gen + `
+    <div class="ai-badge">${AI_ICON} Enfoque propuesto por EugenIA</div>
+    <div class="card tint">
+      <h3 style="font-size:15px;margin:0 0 8px 0;">${escapeHtml(p.tema)}</h3>
+      <p style="font-size:13.5px;margin:0 0 8px 0;"><b>Pregunta principal:</b> ${escapeHtml(p.pregunta_principal)}</p>
+      <p style="font-size:13.5px;margin:0 0 8px 0;"><b>Objetivo general:</b> ${escapeHtml(p.objetivo_general)}</p>
+      ${objs?`<div style="font-size:13.5px;margin:0 0 8px 0;"><b>Objetivos específicos:</b><ul class="plain" style="margin:4px 0 0 0;">${objs}</ul></div>`:""}
+      <p style="font-size:13.5px;margin:0 0 8px 0;"><b>Por qué este giro:</b> ${escapeHtml(p.justificacion_giro)}</p>
+      <div style="border-top:1px solid #E4DFCF;padding-top:8px;">
+        <span class="hint" style="display:block;margin-bottom:2px;">Sostenido por:</span>
+        ${chips||`<span class="hint">Sin fuentes específicas.</span>`}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button class="btn btn-ghost" id="btnDescartarReenfoque" style="flex:1;">Conservar el original</button>
+        <button class="btn btn-primary" id="btnAdoptarReenfoque" style="flex:1;">Adoptar este enfoque</button>
+      </div>
+    </div>`;
+}
+
+function attachReenfoqueHandlers(){
+  const b = document.getElementById("btnReenfocar");
+  if(b) b.onclick = generarReenfoque;
+  const a = document.getElementById("btnAdoptarReenfoque");
+  if(a) a.onclick = adoptarReenfoque;
+  const d = document.getElementById("btnDescartarReenfoque");
+  if(d) d.onclick = descartarReenfoque;
+}
+
+async function generarReenfoque(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(aceptadas.length < 2) return;
+  const referencias = aceptadas.map(r=>({
+    titulo: r.titulo, autores: r.autores, anio: r.anio,
+    resumen: r.resumen || "", justificacion: r.justificacion || ""
+  }));
+  const result = await callAgent("reenfoque", {
+    idea: state.idea, pregunta: state.pregunta, referencias
+  });
+  if(result){ state.reenfoque = result; saveState(); }
+  render();
+}
+
+function adoptarReenfoque(){
+  const p = state.reenfoque;
+  if(!p) return;
+  if(!confirm("Esto actualizará tu tema, pregunta y objetivos con el enfoque propuesto. Podrás seguir editándolos a mano. ¿Adoptar?")) return;
+  if(p.tema) state.idea.tema = p.tema;
+  if(p.problema) state.pregunta.problema = p.problema;
+  if(p.pregunta_principal) state.pregunta.pregunta_principal = p.pregunta_principal;
+  if(p.objetivo_general) state.pregunta.objetivo_general = p.objetivo_general;
+  if(Array.isArray(p.objetivos_especificos) && p.objetivos_especificos.length){
+    state.pregunta.objetivos_especificos = p.objetivos_especificos.slice();
+  }
+  state.reenfoque = null;
+  saveState();
+  goToStep(STAGES.findIndex(s=>s.key==="pregunta"));
+}
+
+function descartarReenfoque(){
+  state.reenfoque = null;
+  saveState();
+  render();
+}
+
+// Señales bibliométricas de una fuente, como chips: tipo de documento, ajuste
+// temático (evaluado por IA), revista y acceso abierto. Las citas y el año van
+// en la línea de meta, aparte.
+function signalChips(r){
+  const chips = [];
+  if(r.fuente) chips.push(`<span class="chip" style="background:#E2EDF3;color:#31566B;">Fuente: ${escapeHtml(r.fuente)}</span>`);
+  if(r.tipo_doc) chips.push(`<span class="chip" style="background:#ECEAE3;color:#5B5B50;">${escapeHtml(r.tipo_doc)}</span>`);
+  if(r.fuerza === "alta") chips.push(`<span class="chip">Ajuste directo</span>`);
+  else if(r.fuerza === "media") chips.push(`<span class="chip pending">Ajuste parcial</span>`);
+  else if(r.fuerza === "baja") chips.push(`<span class="chip" style="background:#ECEAE3;color:#6B6B60;">Ajuste tangencial</span>`);
+  if(r.revista) chips.push(`<span class="chip" style="background:#ECEAE3;color:#5B5B50;">${escapeHtml(truncar(r.revista,28))}</span>`);
+  if(r.oa) chips.push(`<span class="chip">Acceso abierto</span>`);
+  else if(r.oa === false) chips.push(`<span class="chip" style="background:#ECEAE3;color:#6B6B60;">Acceso cerrado</span>`);
+  const chipsHtml = chips.length ? `<div style="margin-top:8px;">${chips.join("")}</div>` : "";
+  const avisoCerrado = (r.oa === false && r.fuerza === "alta")
+    ? `<p class="hint" style="margin:6px 0 0 0;">Este artículo parece muy relevante para tu proyecto pero es de acceso cerrado. Consíguelo manualmente (Sistema de Bibliotecas UPR, préstamo interbibliotecario) antes de decidir si lo aceptas.</p>`
+    : "";
+  return chipsHtml + avisoCerrado;
+}
+
+// Muestra que consulta se ejecuto de verdad y que devolvio cada base. Es la pieza que
+// vuelve la busqueda auditable: sin esto el investigador no puede saber ni repetir lo que
+// la app busco en su nombre.
+function renderQueryUsada(meta){
+  if(!meta) return "";
+  const origen = meta.query_origen === "manual"
+    ? "escrita por ti"
+    : "generada por EugenIA a partir de tu proyecto";
+  const bases = Object.entries(meta.por_base || {}).map(([nombre, n])=>{
+    if(n === null) return `<span class="chip" style="background:#F3E4E4;color:#8A3B3B;">${escapeHtml(nombre)}: no respondió</span>`;
+    return `<span class="chip" style="background:#E2EDF3;color:#31566B;">${escapeHtml(nombre)}: ${n}</span>`;
+  }).join("");
+  const f = meta.filtros || {};
+  const filtros = [];
+  if(f.desde_anio) filtros.push("desde " + f.desde_anio);
+  if(f.tipo === "revision") filtros.push("solo revisiones");
+  if(f.tipo === "primario") filtros.push("sin revisiones");
+  return `
+    <div style="background:var(--soft);border-radius:10px;padding:10px 12px;margin-top:10px;">
+      <p style="font-size:12.5px;margin:0 0 4px 0;"><b>Consulta usada</b> (${escapeHtml(origen)}):</p>
+      <p style="font-size:12.5px;font-family:ui-monospace,Consolas,monospace;margin:0 0 6px 0;word-break:break-word;">${escapeHtml(meta.query||"")}</p>
+      ${meta.query_ampliada ? `<p class="hint" style="margin:0 0 6px 0;">Daba pocos resultados, así que también se probó una consulta más amplia: <b>${escapeHtml(meta.query_ampliada)}</b></p>` : ""}
+      ${filtros.length ? `<p class="hint" style="margin:0 0 6px 0;">Filtros aplicados: ${escapeHtml(filtros.join(", "))}${meta.descartados_por_tipo ? " (" + meta.descartados_por_tipo + " descartados por tipo)" : ""}</p>` : ""}
+      <div>${bases}</div>
+    </div>`;
+}
+
+// Panel para que el investigador tome el control de la busqueda: reescribir la consulta,
+// acotar por anio y por tipo de documento. Sin esto la busqueda es una caja negra.
+function renderAjustesBusqueda(key, i){
+  const c = getSearchControls(key);
+  if(!c.abierto){
+    return `<button class="small-btn toggle-ajustes" data-key="${escapeAttr(key)}" type="button" style="margin-top:8px;">Ajustar la búsqueda</button>`;
+  }
+  return `
+    <div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;">
+      <label style="font-size:12.5px;">Consulta (déjala vacía para que EugenIA la escriba)</label>
+      <input type="text" class="ajuste-query" data-key="${escapeAttr(key)}" value="${escapeAttr(c.query)}" placeholder="ej: Plectranthus amboinicus ethanol extraction phenolic">
+      <div class="field-row" style="margin-top:8px;">
+        <div>
+          <label style="font-size:12.5px;">Desde el año</label>
+          <input type="number" class="ajuste-anio" data-key="${escapeAttr(key)}" value="${escapeAttr(c.desdeAnio)}" placeholder="ej: 2015" min="1800" max="2100">
+        </div>
+        <div>
+          <label style="font-size:12.5px;">Tipo</label>
+          <select class="ajuste-tipo" data-key="${escapeAttr(key)}">
+            <option value=""${c.tipo===""?" selected":""}>Todos</option>
+            <option value="revision"${c.tipo==="revision"?" selected":""}>Solo revisiones</option>
+            <option value="primario"${c.tipo==="primario"?" selected":""}>Sin revisiones</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint" style="margin:8px 0 0 0;">Si escribes tu propia consulta, se usa exactamente esa: EugenIA no la reformula ni la amplía por su cuenta, para que puedas repetir la misma búsqueda después.</p>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="small-btn toggle-ajustes" data-key="${escapeAttr(key)}" type="button" style="flex:1;">Cerrar</button>
+        <button class="small-btn buscar-btn" data-idx="${i}" type="button" style="flex:1;background:var(--moss);color:#fff;border-color:var(--moss);">Buscar con estos ajustes</button>
+      </div>
+    </div>`;
+}
+
+function renderPerspectivaBusqueda(m, i){
+  const key = m.perspectiva;
+  const buscando = searchState.activo === key;
+  const res = searchState.resultados[key];
+  const err = searchState.error[key];
+  const meta = searchState.meta[key];
+  return `
+  <div class="card">
+    <h3 style="font-size:15px;">${escapeHtml(m.perspectiva)}</h3>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 10px 0;">${escapeHtml(m.que_necesito)}</p>
+    ${buscando
+      ? `<div class="loading"><div class="spinner"></div> Buscando artículos reales…</div>`
+      : `<button class="btn ${res?'btn-ghost':'btn-accent'} buscar-btn" data-idx="${i}" style="width:100%;">${res?'Buscar otra vez':'Buscar artículos'}</button>`}
+    ${buscando ? "" : renderAjustesBusqueda(key, i)}
+    ${err ? `<p class="hint" style="color:var(--danger);">${escapeHtml(err)}</p>` : ""}
+    ${renderQueryUsada(meta)}
+    ${(res && res.length===0) ? `<p class="hint">No se encontraron artículos con esta consulta. Prueba a reescribirla en "Ajustar la búsqueda", o a soltar los filtros.</p>` : ""}
+    ${(res && res.length>0) ? res.map((c,j)=>renderCandidato(key,c,j)).join("") : ""}
+  </div>`;
+}
+
+function renderCandidato(key, c, j){
+  const yaAgregado = state.bibliografia.some(r => (c.doi && r.doi===c.doi) || r.titulo===c.titulo);
+  return `
+  <div class="ref-item" style="margin-top:10px;">
+    <h3 style="font-size:14.5px;">${escapeHtml(c.titulo)}</h3>
+    <div class="meta">${escapeHtml(c.autores)}${c.anio?(' · '+escapeHtml(String(c.anio))):''}${typeof c.citas==='number'?(' · '+c.citas+' citas'):''}</div>
+    ${signalChips(c)}
+    ${c.aporte ? `<p style="font-size:13px;margin:8px 0 0 0;"><b>Aporte a tu investigación:</b> ${escapeHtml(c.aporte)}</p>` : ""}
+    ${c.resumen ? `<p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0 0;">${escapeHtml(truncar(c.resumen,240))}</p>` : ""}
+    <div class="status-row">
+      ${c.url ? `<a class="status-btn" href="${escapeAttr(c.url)}" target="_blank" rel="noopener">Ver fuente</a>` : ""}
+      <button class="status-btn add-cand" data-key="${escapeAttr(key)}" data-idx="${j}" ${yaAgregado?'disabled':''} style="${yaAgregado?'':'background:var(--moss);color:#fff;border-color:var(--moss);'}">${yaAgregado?'Ya añadido':'Añadir a mi bibliografía'}</button>
+    </div>
+  </div>`;
+}
+
+async function buscarArticulos(i){
+  const m = state.mapa[i];
+  if(!m) return;
+  const key = m.perspectiva;
+  const ctrl = getSearchControls(key);
+  searchState.activo = key;
+  searchState.error[key] = null;
+  render();
+  try{
+    const resp = await fetch("/api/search", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        perspectiva: m.perspectiva,
+        que_necesito: m.que_necesito,
+        query: ctrl.query || "",
+        desde_anio: ctrl.desdeAnio || "",
+        tipo: ctrl.tipo || "",
+        contexto: {
+          tema: state.idea.tema,
+          abstract: state.idea.abstract,
+          problema: state.pregunta.problema,
+          pregunta_principal: state.pregunta.pregunta_principal
+        }
+      })
+    });
+    if(!resp.ok){
+      let msg = "No se pudo buscar artículos.";
+      try{ const e = await resp.json(); if(e && e.error) msg = e.error; }catch(_){}
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    searchState.resultados[key] = data.resultados || [];
+    searchState.meta[key] = {
+      query: data.query || "",
+      query_origen: data.query_origen || "",
+      query_ampliada: data.query_ampliada || "",
+      por_base: data.por_base || {},
+      filtros: data.filtros || {},
+      total_encontrado: data.total_encontrado || 0,
+      descartados_por_tipo: data.descartados_por_tipo || 0
+    };
+    // Registro persistente de la busqueda. Se guarda cada corrida, no solo la ultima:
+    // reconstruir como se armo el corpus exige saber tambien lo que se probo y descarto.
+    state.busquedas.push({
+      fecha: new Date().toISOString(),
+      componente: key,
+      query: data.query || "",
+      query_origen: data.query_origen || "",
+      query_ampliada: data.query_ampliada || "",
+      por_base: data.por_base || {},
+      filtros: data.filtros || {},
+      total_encontrado: data.total_encontrado || 0,
+      mostrados: (data.resultados || []).length
+    });
+    saveState();
+  }catch(e){
+    console.error("Error buscando artículos:", e);
+    searchState.error[key] = e.message || "No se pudo buscar. Inténtalo de nuevo.";
+  }finally{
+    searchState.activo = null;
+    render();
+  }
+}
+
+function agregarReferencia(c, perspectiva){
+  const dup = state.bibliografia.some(r => (c.doi && r.doi===c.doi) || r.titulo===c.titulo);
+  if(dup) return;
+  state.bibliografia.push({
+    titulo: c.titulo,
+    autores: c.autores || "",
+    // Lista de autores tal como la entrego la base. Es lo que usan las exportaciones a
+    // BibTeX y RIS: partir la cadena "autores" seria ambiguo y podria inventar personas.
+    autores_lista: Array.isArray(c.autores_lista) ? c.autores_lista.slice() : [],
+    anio: c.anio || "",
+    justificacion: c.aporte || "",
+    estado: "pendiente",
+    doi: c.doi || "",
+    url: c.url || "",
+    // Se conserva null ("no se sabe") en vez de coercionar a false: Crossref no informa
+    // estado de acceso abierto, y guardarlo como false haria que la referencia se mostrara
+    // como "Acceso cerrado", afirmando algo que no podemos sostener.
+    oa: (typeof c.oa === "boolean") ? c.oa : null,
+    citas: (typeof c.citas === "number") ? c.citas : null,
+    revista: c.revista || "",
+    tipo_doc: c.tipo_doc || "",
+    fuerza: c.fuerza || "",
+    resumen: c.resumen || "",
+    fuente: c.fuente || "OpenAlex",
+    perspectiva: perspectiva
+  });
+  saveState(); render();
+}
+
+function attachBibliografiaHandlers(){
+  const btn = document.getElementById("btnAddRef");
+  if(btn) btn.onclick = () => {
+    const titulo = document.getElementById("ref_titulo").value.trim();
+    if(!titulo){ alert("Escribe al menos el título."); return; }
+    state.bibliografia.push({
+      titulo,
+      autores: document.getElementById("ref_autores").value,
+      anio: document.getElementById("ref_anio").value,
+      resumen: document.getElementById("ref_resumen").value,
+      justificacion: document.getElementById("ref_justificacion").value,
+      estado: "pendiente"
+    });
+    refDraft = { titulo: "", autores: "", anio: "", resumen: "" };
+    pdfExtractState = { activo: false, error: "" };
+    const pdfInput = document.getElementById("ref_pdf");
+    if(pdfInput) pdfInput.value = "";
+    saveState(); render();
+  };
+  ["ref_titulo","ref_autores","ref_anio","ref_resumen"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const draftKey = id.replace("ref_","");
+    el.oninput = () => { refDraft[draftKey] = el.value; };
+  });
+  const btnExtraerPdf = document.getElementById("btnExtraerPdf");
+  if(btnExtraerPdf) btnExtraerPdf.onclick = extraerReferenciaDePdf;
+  document.querySelectorAll(".status-btn[data-i]").forEach(b=>{
+    b.onclick = () => {
+      const i = parseInt(b.dataset.i);
+      state.bibliografia[i].estado = b.dataset.estado;
+      saveState(); render();
+    };
+  });
+  document.querySelectorAll(".buscar-btn").forEach(b=>{
+    b.onclick = () => buscarArticulos(parseInt(b.dataset.idx));
+  });
+  // Controles de la busqueda. Se leen en vivo al escribir para que el valor sobreviva al
+  // re-render que dispara cualquier otro boton de la pantalla.
+  document.querySelectorAll(".toggle-ajustes").forEach(b=>{
+    b.onclick = () => {
+      const c = getSearchControls(b.dataset.key);
+      c.abierto = !c.abierto;
+      render();
+    };
+  });
+  document.querySelectorAll(".ajuste-query").forEach(el=>{
+    el.oninput = () => { getSearchControls(el.dataset.key).query = el.value; };
+  });
+  document.querySelectorAll(".ajuste-anio").forEach(el=>{
+    el.oninput = () => { getSearchControls(el.dataset.key).desdeAnio = el.value; };
+  });
+  document.querySelectorAll(".ajuste-tipo").forEach(el=>{
+    el.onchange = () => { getSearchControls(el.dataset.key).tipo = el.value; };
+  });
+  document.querySelectorAll(".add-cand").forEach(b=>{
+    b.onclick = () => {
+      const key = b.dataset.key;
+      const idx = parseInt(b.dataset.idx);
+      const cand = (searchState.resultados[key] || [])[idx];
+      if(cand) agregarReferencia(cand, key);
+    };
+  });
+  attachReenfoqueHandlers();
+}
+
+/* ============ SUBIR PDF PROPIO: extraccion de referencia ============ */
+// Extraccion de texto 100% en el cliente (pdf.js via CDN, cargado solo cuando
+// hace falta). Solo el texto extraido (nunca el PDF) se envia al backend, a
+// la tarea "extraerReferencia" de /api/generate. Ver docs/decisions.md.
+function loadPdfJs(){
+  if(pdfjsLoadPromise) return pdfjsLoadPromise;
+  pdfjsLoadPromise = new Promise((resolve, reject) => {
+    if(window.pdfjsLib){ resolve(window.pdfjsLib); return; }
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    script.onload = () => {
+      try{
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        resolve(window.pdfjsLib);
+      }catch(e){ reject(e); }
+    };
+    script.onerror = () => reject(new Error("No se pudo cargar el lector de PDF."));
+    document.head.appendChild(script);
+  });
+  return pdfjsLoadPromise;
+}
+
+async function extraerTextoPdf(file){
+  const pdfjsLib = await loadPdfJs();
+  const buffer = await file.arrayBuffer();
+  const doc = await pdfjsLib.getDocument({ data: buffer }).promise;
+  const maxPaginas = Math.min(doc.numPages, 3);
+  let texto = "";
+  for(let i = 1; i <= maxPaginas; i++){
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    texto += content.items.map(it => it.str).join(" ") + "\n";
+  }
+  return texto.trim();
+}
+
+async function extraerReferenciaDePdf(){
+  const input = document.getElementById("ref_pdf");
+  const file = input && input.files && input.files[0];
+  if(!file){ alert("Elige un archivo PDF primero."); return; }
+  if(file.size > 20 * 1024 * 1024){
+    pdfExtractState = { activo: false, error: "El archivo es muy grande (máximo 20MB)." };
+    render();
+    return;
+  }
+  pdfExtractState = { activo: true, error: "" };
+  render();
+
+  let texto;
+  try{
+    texto = await extraerTextoPdf(file);
+  }catch(e){
+    console.error("Error leyendo el PDF:", e);
+    pdfExtractState = { activo: false, error: "No se pudo leer este PDF (puede estar protegido con contraseña o dañado). Añade la referencia a mano." };
+    render();
+    return;
+  }
+  if(texto.length < 40){
+    pdfExtractState = { activo: false, error: "Este PDF parece ser una imagen escaneada; no se puede leer el texto. Añade la referencia a mano." };
+    render();
+    return;
+  }
+
+  try{
+    const resp = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ task: "extraerReferencia", payload: { texto: texto.slice(0, 6000) } })
+    });
+    if(!resp.ok){
+      let msg = "No se pudieron extraer los datos del PDF.";
+      try{ const e = await resp.json(); if(e && e.error) msg = e.error; }catch(_){}
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    const result = data.result || {};
+    refDraft = {
+      titulo: result.titulo || "",
+      autores: result.autores || "",
+      anio: result.anio || "",
+      resumen: result.resumen || ""
+    };
+    pdfExtractState = { activo: false, error: "" };
+  }catch(e){
+    console.error("Error extrayendo datos del PDF:", e);
+    pdfExtractState = { activo: false, error: e.message || "No se pudieron extraer los datos del PDF. Inténtalo de nuevo." };
+  }
+  render();
+}
+
+/* ============ STEP 6: MATRIZ DE DECISIÓN ============ */
+// Traduce la evidencia curada (referencias aceptadas) en criterios de decisión.
+// Las dimensiones las genera la IA según el campo del proyecto, para servir a
+// cualquier disciplina. Cada fila enlaza a las fuentes reales que la sostienen;
+// nunca se inventan datos ni citas (ver docs/vision-app.md).
+function refUrl(r){
+  if(r && r.url) return r.url;
+  if(r && r.doi) return "https://doi.org/" + r.doi;
+  return "";
+}
+
+function renderMDE(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const mde = state.mde || [];
+  if(aceptadas.length === 0){
+    return `<div class="card tint"><p style="margin:0;">La Matriz de Decisión se construye a partir de tus referencias aceptadas. Vuelve a <b>Bibliografía viva</b> y acepta al menos unas cuantas fuentes para poder generarla.</p></div>`;
+  }
+  const intro = `
+    <div class="card">
+      <p style="margin:0 0 10px 0;">La <b>Matriz de Decisión</b> convierte la evidencia que ya curaste en criterios operativos concretos para tu investigación. EugenIA propone las dimensiones de decisión según tu campo, y sostiene cada una con tus fuentes reales.</p>
+      <p class="hint" style="margin:0 0 12px 0;">Basada en ${aceptadas.length} referencia(s) aceptada(s). Revisa y ajusta cada criterio con tu propio juicio antes de adoptarlo.</p>
+      <button class="btn btn-accent" id="btnGenerarMDE" style="width:100%;">${mde.length ? "Regenerar matriz" : "Generar Matriz de Decisión"}</button>
+    </div>`;
+  if(mde.length === 0){
+    return intro + `<div class="empty">Aún no has generado la matriz.</div>`;
+  }
+  const filas = mde.map(d=>{
+    const chips = (Array.isArray(d.fuentes)?d.fuentes:[])
+      .map(n=>aceptadas[n-1])
+      .filter(Boolean)
+      .map(r=>{
+        const u = refUrl(r);
+        const etiqueta = escapeHtml(truncar(r.titulo, 60));
+        return u
+          ? `<a href="${escapeAttr(u)}" target="_blank" rel="noopener" style="display:inline-block;font-size:12px;background:var(--moss-light);color:var(--forest);border-radius:10px;padding:3px 9px;margin:3px 4px 0 0;text-decoration:none;">${etiqueta}</a>`
+          : `<span style="display:inline-block;font-size:12px;background:var(--moss-light);color:var(--forest);border-radius:10px;padding:3px 9px;margin:3px 4px 0 0;">${etiqueta}</span>`;
+      }).join("");
+    return `
+      <div class="card tint">
+        <h3 style="font-size:15px;margin:0 0 8px 0;">${escapeHtml(d.dimension)}</h3>
+        <p style="font-size:13.5px;margin:0 0 8px 0;"><b>Evidencia curada:</b> ${escapeHtml(d.hallazgo_evidencia)}</p>
+        <p style="font-size:13.5px;margin:0 0 8px 0;"><b>Criterio adoptado:</b> ${escapeHtml(d.criterio_adoptado)}</p>
+        <div style="border-top:1px solid #E4DFCF;padding-top:8px;">
+          <span class="hint" style="display:block;margin-bottom:2px;">Sostenido por:</span>
+          ${chips || `<span class="hint">Sin fuentes específicas asignadas.</span>`}
+        </div>
+      </div>`;
+  }).join("");
+  return `
+    <div class="ai-badge">${AI_ICON} Matriz generada por EugenIA</div>
+    ${filas}
+    ${intro}`;
+}
+
+function attachMdeHandlers(){
+  const btn = document.getElementById("btnGenerarMDE");
+  if(btn) btn.onclick = generarMDE;
+}
+
+async function generarMDE(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(aceptadas.length === 0) return;
+  const referencias = aceptadas.map(r=>({
+    titulo: r.titulo,
+    autores: r.autores,
+    anio: r.anio,
+    resumen: r.resumen || "",
+    justificacion: r.justificacion || "",
+    doi: r.doi || "",
+    url: r.url || ""
+  }));
+  const result = await callAgent("mde", {
+    idea: state.idea,
+    pregunta: state.pregunta,
+    referencias
+  });
+  if(result && Array.isArray(result)){
+    state.mde = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ SÍNTESIS DE EVIDENCIA ============ */
+function renderSourceLinks(fuentes, refs){
+  return (Array.isArray(fuentes)?fuentes:[])
+    .map(n=>refs[n-1])
+    .filter(Boolean)
+    .map(r=>{
+      const url = refUrl(r);
+      const label = escapeHtml(truncar(r.titulo, 58));
+      return url
+        ? `<a class="chip" href="${escapeAttr(url)}" target="_blank" rel="noopener" style="text-decoration:none;">${label}</a>`
+        : `<span class="chip">${label}</span>`;
+    }).join("");
+}
+
+function renderSintesis(){
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const hallazgos = state.sintesis || [];
+  if(refs.length < 2){
+    return `<div class="card tint"><p style="margin:0;">La síntesis comparativa necesita al menos dos referencias aceptadas. Vuelve a <b>Bibliografía viva</b> para ampliar el corpus.</p></div>`;
+  }
+  const intro = `
+    <div class="card">
+      <h3>Síntesis trazable</h3>
+      <p>Compara el corpus seleccionado para revelar convergencias, contradicciones y preguntas que todavía no resuelve.</p>
+      <p class="hint">El análisis se basa en los resúmenes disponibles. Una brecha aquí significa una brecha del corpus seleccionado, no necesariamente de toda la literatura.</p>
+      <button class="btn btn-accent" id="btnSintesis" style="width:100%;">${hallazgos.length?"Regenerar síntesis":"Analizar evidencia aceptada"}</button>
+    </div>`;
+  if(!hallazgos.length) return intro;
+  const cards = hallazgos.map(h=>`
+    <div class="card finding ${escapeAttr(h.tipo)}">
+      <div class="finding-label">${escapeHtml(h.tipo)} · confianza ${escapeHtml(h.confianza)}</div>
+      <h3 style="font-size:16px;">${escapeHtml(h.hallazgo)}</h3>
+      <p style="font-size:13.5px;"><b>Implicación para el proyecto:</b> ${escapeHtml(h.implicacion)}</p>
+      <div>${renderSourceLinks(h.fuentes, refs) || `<span class="hint">Sin fuentes específicas asignadas.</span>`}</div>
+    </div>`).join("");
+  return `<div class="ai-badge">${AI_ICON} Síntesis generada por EugenIA</div>${cards}${intro}`;
+}
+
+function attachSintesisHandlers(){
+  const btn = document.getElementById("btnSintesis");
+  if(btn) btn.onclick = generarSintesis;
+}
+
+async function generarSintesis(){
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(refs.length < 2) return;
+  const referencias = refs.map(r=>({
+    titulo:r.titulo, autores:r.autores, anio:r.anio,
+    resumen:r.resumen||"", justificacion:r.justificacion||""
+  }));
+  const result = await callAgent("sintesis", {idea:state.idea, pregunta:state.pregunta, referencias});
+  if(result && Array.isArray(result)){
+    state.sintesis = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ TUS RESULTADOS ============ */
+// Insumo de primera clase para la auditoria de defendibilidad: lo que el propio
+// investigador ya midio/encontro, distinto de la literatura de otros. 100% manual,
+// sin boton de IA: a diferencia de una ficha de lectura (que resume un abstract real
+// y externo), aqui no hay ningun texto externo verificable del que la IA pueda
+// partir sin arriesgarse a inventar datos empiricos que el investigador nunca midio.
+function renderResultados(){
+  const items = state.resultadosPropios || [];
+  return `
+  <div class="card tint">
+    <p style="margin:0;">Declara aqui lo que tu mismo ya mediste o encontraste en tu propia investigacion, no lo que dice la literatura. Este insumo alimenta la auditoria de defendibilidad: entre mas completo, mas puede anclarse en tus propios datos en vez de solo en la literatura.</p>
+  </div>
+  <div class="card">
+    <label>Titulo breve</label>
+    <input type="text" id="res_titulo" placeholder="Ej. Rendimiento de extraccion con etanol 50%">
+    <label>¿Qué mediste?</label>
+    <textarea id="res_que_midio" placeholder="La variable o fenomeno que mediste"></textarea>
+    <label>Método</label>
+    <textarea id="res_metodo" placeholder="Como lo mediste, brevemente"></textarea>
+    <label>Muestra o alcance</label>
+    <textarea id="res_muestra_alcance" placeholder="Tamaño de muestra, repeticiones, poblacion, alcance del experimento"></textarea>
+    <label>Hallazgo</label>
+    <textarea id="res_hallazgo" placeholder="Que encontraste, con cifras si las tienes"></textarea>
+    <label>Limitaciones que ya reconoces</label>
+    <textarea id="res_limitaciones" placeholder="Opcional, pero fortalece la auditoria: que le falta a este resultado"></textarea>
+    <button class="btn btn-primary" id="btnAddResultado" style="width:100%;margin-top:12px;">Guardar resultado</button>
+  </div>
+  <h3 style="font-size:15px;margin:6px 0 10px 0;">Mis resultados propios</h3>
+  ${items.length === 0 ? `<div class="empty">Aún no has declarado resultados propios.</div>` : items.map(r=>`
+    <div class="card tint">
+      <h3 style="font-size:15px;">${escapeHtml(r.titulo)}</h3>
+      ${r.que_midio ? `<p style="font-size:13.5px;margin:6px 0 0 0;"><b>Qué midió:</b> ${escapeHtml(r.que_midio)}</p>` : ""}
+      ${r.metodo ? `<p style="font-size:13.5px;margin:6px 0 0 0;"><b>Método:</b> ${escapeHtml(r.metodo)}</p>` : ""}
+      ${r.muestra_alcance ? `<p style="font-size:13.5px;margin:6px 0 0 0;"><b>Muestra/alcance:</b> ${escapeHtml(r.muestra_alcance)}</p>` : ""}
+      ${r.hallazgo ? `<p style="font-size:13.5px;margin:6px 0 0 0;"><b>Hallazgo:</b> ${escapeHtml(r.hallazgo)}</p>` : ""}
+      ${r.limitaciones ? `<p style="font-size:13.5px;margin:6px 0 0 0;"><b>Limitaciones:</b> ${escapeHtml(r.limitaciones)}</p>` : ""}
+    </div>
+  `).join("")}`;
+}
+
+function attachResultadosHandlers(){
+  const btn = document.getElementById("btnAddResultado");
+  if(btn) btn.onclick = () => {
+    const titulo = document.getElementById("res_titulo").value.trim();
+    if(!titulo){ alert("Escribe al menos un titulo breve."); return; }
+    state.resultadosPropios.push({
+      titulo,
+      que_midio: document.getElementById("res_que_midio").value,
+      metodo: document.getElementById("res_metodo").value,
+      muestra_alcance: document.getElementById("res_muestra_alcance").value,
+      hallazgo: document.getElementById("res_hallazgo").value,
+      limitaciones: document.getElementById("res_limitaciones").value
+    });
+    saveState(); render();
+  };
+}
+
+/* ============ AUDITORÍA DE DEFENDIBILIDAD ============ */
+// Primer paso construido de la extension estrategica "companero de defendibilidad"
+// (ver docs/vision-app.md). Tarea de mayor riesgo de alucinacion de la app: cada
+// senal que devuelve el modelo debe anclarse a una fuente real, a una ausencia
+// declarada del corpus, o a un elemento concreto de los resultados/diseno propio.
+const DIMENSIONES_AUDITORIA = {
+  teorica: "Teórica",
+  metodologica: "Metodológica",
+  etica: "Ética",
+  novedad: "Novedad",
+  reproducibilidad: "Reproducibilidad",
+  alineacion_pregunta_evidencia: "Alineación pregunta-evidencia"
+};
+
+function renderAuditoria(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const propios = state.resultadosPropios || [];
+  const aud = state.auditoria;
+  if(aceptadas.length < 2){
+    return `<div class="card tint"><p style="margin:0;">La auditoría de defendibilidad necesita al menos dos referencias aceptadas para comparar tu trabajo contra la literatura. Vuelve a <b>Bibliografía viva</b> para ampliar el corpus.</p></div>`;
+  }
+  const sinPropios = propios.length === 0
+    ? `<p class="hint" style="margin:0 0 12px 0;">Aún no has declarado resultados propios. La auditoría puede correr solo con literatura, pero será más limitada en reproducibilidad y alineación pregunta-evidencia. Vuelve a <b>Tus resultados</b> para enriquecerla.</p>`
+    : "";
+  const intro = `
+    <div class="card">
+      <p style="margin:0 0 10px 0;">La auditoría identifica posibles huecos que un revisor podría usar para atacar tu trabajo, en 6 dimensiones: teórica, metodológica, ética, novedad, reproducibilidad y alineación entre tu pregunta y la evidencia. Cada señal se ancla a una fuente real, a una ausencia del corpus, o a un elemento concreto de tus resultados propios.</p>
+      ${sinPropios}
+      <button class="btn btn-accent" id="btnGenerarAuditoria" style="width:100%;">${aud ? "Regenerar auditoría" : "Generar auditoría de defendibilidad"}</button>
+    </div>`;
+  if(!aud) return intro;
+
+  const cobertura = Array.isArray(aud.cobertura) ? aud.cobertura : [];
+  const chips = cobertura.map(c=>{
+    const nombre = DIMENSIONES_AUDITORIA[c.dimension] || c.dimension;
+    const cls = c.estado === "senales_encontradas" ? "chip" : "chip pending";
+    return `<span class="${cls}" title="${escapeAttr(c.nota||"")}">${escapeHtml(nombre)}</span>`;
+  }).join("");
+
+  const senales = Array.isArray(aud.senales) ? aud.senales : [];
+  const porDimension = {};
+  senales.forEach(sn=>{ (porDimension[sn.dimension] = porDimension[sn.dimension] || []).push(sn); });
+
+  const grupos = Object.keys(DIMENSIONES_AUDITORIA).filter(d=>porDimension[d] && porDimension[d].length).map(d=>{
+    const tarjetas = porDimension[d].map(sn=>{
+      const sevClase = sn.severidad === "alta" ? "contradiccion" : (sn.severidad === "baja" ? "brecha" : "");
+      const prefijo = d === "etica" ? "Pregunta a considerar: " : "";
+      const anclaLit = sn.ancla_tipo === "fuente_bibliografica" || sn.ancla_tipo === "ausencia_en_corpus";
+      return `
+        <div class="card finding ${sevClase}">
+          <div class="finding-label">Severidad ${escapeHtml(sn.severidad)}</div>
+          <h3 style="font-size:15px;">${prefijo}${escapeHtml(sn.senal)}</h3>
+          <p style="font-size:13.5px;"><b>Por qué importa:</b> ${escapeHtml(sn.por_que_importa)}</p>
+          <p style="font-size:13px;color:var(--ink-soft);">${escapeHtml(sn.ancla_detalle)}</p>
+          ${anclaLit ? `<div>${renderSourceLinks(sn.fuentes, aceptadas) || ""}</div>` : ""}
+        </div>`;
+    }).join("");
+    return `<h3 style="font-size:15px;margin:14px 0 6px 0;">${escapeHtml(DIMENSIONES_AUDITORIA[d])}</h3>${tarjetas}`;
+  }).join("");
+
+  return `
+    <div class="ai-badge">${AI_ICON} Auditoría generada por EugenIA</div>
+    <div class="card" style="padding:14px;">
+      <span class="hint" style="display:block;margin-bottom:8px;">Cobertura por dimensión (pasa el cursor para ver la nota):</span>
+      ${chips}
+    </div>
+    ${grupos || `<div class="empty">No se encontraron señales con base suficiente en la evidencia provista.</div>`}
+    ${intro}`;
+}
+
+function attachAuditoriaHandlers(){
+  const btn = document.getElementById("btnGenerarAuditoria");
+  if(btn) btn.onclick = generarAuditoria;
+}
+
+async function generarAuditoria(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(aceptadas.length < 2) return;
+  const referencias = aceptadas.map(r=>({
+    titulo:r.titulo, autores:r.autores, anio:r.anio,
+    resumen:r.resumen||"", justificacion:r.justificacion||""
+  }));
+  const result = await callAgent("auditoria", {
+    idea: state.idea,
+    pregunta: state.pregunta,
+    referencias,
+    sintesis: state.sintesis || [],
+    mde: state.mde || [],
+    resultadosPropios: state.resultadosPropios || []
+  });
+  if(result){
+    state.auditoria = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ STEP 7: NOTAS DE LECTURA ============ */
+// Nota de diseño (ver CLAUDE.md y docs/decisions.md 2026-07-12): este paso sigue
+// siendo manual por principio (la curación crítica no se delega a un atajo
+// automático). La IA aquí es una SUGERENCIA opcional que el estudiante debe
+// revisar y editar, nunca un resultado final que se guarda sin pasar por sus manos.
+function renderNotas(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const notas = state.notas;
+  if(notaDraft.refIdx >= aceptadas.length) notaDraft.refIdx = 0;
+  const refSeleccionada = aceptadas[notaDraft.refIdx];
+  const tieneResumen = !!(refSeleccionada && refSeleccionada.resumen && refSeleccionada.resumen.trim());
+  return `
+  ${aceptadas.length === 0 ? `<div class="card tint"><p style="margin:0;">Aún no tienes referencias aceptadas. Vuelve al paso anterior y acepta al menos una para crear una ficha de lectura.</p></div>` : `
+    <div class="card">
+      <label>Referencia</label>
+      <select id="nota_ref">
+        ${aceptadas.map((r,i)=>`<option value="${i}" ${i===notaDraft.refIdx?'selected':''}>${escapeHtml(r.titulo)}</option>`).join("")}
+      </select>
+      <button class="btn btn-ghost" id="btnSugerirNota" type="button" style="width:100%;margin:8px 0;" ${!tieneResumen?'disabled':''}>${AI_ICON} Sugerir con IA</button>
+      ${!tieneResumen ? `<p class="hint">Esta referencia se añadió a mano y no tiene un resumen real, así que EugenIA no puede sugerir una ficha. Complétala tú directamente.</p>` : `<p class="hint">EugenIA propone un borrador a partir del resumen real del artículo. Revísalo y ajústalo con tu propio criterio antes de guardar.</p>`}
+      <label>Idea principal</label>
+      <textarea id="nota_idea">${escapeHtml(notaDraft.idea)}</textarea>
+      <label>Conceptos clave</label>
+      <textarea id="nota_conceptos">${escapeHtml(notaDraft.conceptos)}</textarea>
+      <label>Relación con mi investigación</label>
+      <textarea id="nota_relacion">${escapeHtml(notaDraft.relacion)}</textarea>
+      <button class="btn btn-primary" id="btnAddNota" style="width:100%;margin-top:12px;">Guardar ficha</button>
+    </div>
+  `}
+  ${notas.length === 0 ? `<div class="empty">Aún no has creado fichas de lectura.</div>` : notas.map(n=>`
+    <div class="card tint">
+      <h3 style="font-size:15px;">${escapeHtml(n.titulo)}</h3>
+      <p style="font-size:13.5px;"><b>Idea principal:</b> ${escapeHtml(n.idea)}</p>
+      <p style="font-size:13.5px;"><b>Conceptos:</b> ${escapeHtml(n.conceptos)}</p>
+      <p style="font-size:13.5px;margin:0;"><b>Relación:</b> ${escapeHtml(n.relacion)}</p>
+    </div>
+  `).join("")}`;
+}
+
+function attachNotasHandlers(){
+  const sel = document.getElementById("nota_ref");
+  if(sel) sel.onchange = () => {
+    notaDraft.refIdx = parseInt(sel.value);
+    notaDraft.idea = ""; notaDraft.conceptos = ""; notaDraft.relacion = "";
+    render();
+  };
+  ["nota_idea","nota_conceptos","nota_relacion"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const draftKey = id.replace("nota_","");
+    el.oninput = () => { notaDraft[draftKey] = el.value; };
+  });
+  const btnSugerir = document.getElementById("btnSugerirNota");
+  if(btnSugerir) btnSugerir.onclick = generarNota;
+  const btn = document.getElementById("btnAddNota");
+  if(btn) btn.onclick = () => {
+    const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+    const ref = aceptadas[notaDraft.refIdx];
+    state.notas.push({
+      titulo: ref.titulo,
+      idea: document.getElementById("nota_idea").value,
+      conceptos: document.getElementById("nota_conceptos").value,
+      relacion: document.getElementById("nota_relacion").value
+    });
+    notaDraft = { refIdx: 0, idea: "", conceptos: "", relacion: "" };
+    saveState(); render();
+  };
+}
+
+async function generarNota(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const ref = aceptadas[notaDraft.refIdx];
+  if(!ref || !ref.resumen) return;
+  const result = await callAgent("notas", {
+    referencia: ref,
+    idea: state.idea,
+    pregunta: state.pregunta
+  });
+  if(result){
+    notaDraft.idea = result.idea_principal || "";
+    notaDraft.conceptos = Array.isArray(result.conceptos_clave) ? result.conceptos_clave.join(", ") : "";
+    notaDraft.relacion = result.relacion_investigacion || "";
+    render();
+  }
+}
+
+/* ============ STEP 7: DIVULGACIÓN ============ */
+const FORMATOS = ["Artículo científico","Ponencia de congreso","Presentación oral","Póster académico","Informe final","Mini paper","Video educativo","Página web","Infografía"];
+
+function renderDivulgacion(){
+  const d = state.divulgacion;
+  return `
+  <div class="card">
+    <label>¿Cómo quieres divulgar tu investigación?</label>
+    <select id="div_formato">
+      <option value="">Selecciona un formato</option>
+      ${FORMATOS.map(f=>`<option value="${f}" ${d.formato===f?'selected':''}>${f}</option>`).join("")}
+    </select>
+    <button class="btn btn-accent" id="btnGenerarOutline" style="width:100%;margin-top:14px;" ${!d.formato?'disabled':''}>Generar estructura</button>
+  </div>
+  ${d.outline ? `
+    <div class="ai-badge">${AI_ICON} Estructura sugerida por EugenIA</div>
+    ${d.outline.estructura.map((s,i)=>`
+      <div class="card tint">
+        <h3 style="font-size:15px;">${i+1}. ${escapeHtml(s.seccion)}</h3>
+        <p style="font-size:13.5px;margin:0;">${escapeHtml(s.contenido_breve)}</p>
+      </div>
+    `).join("")}
+    <button class="btn btn-ghost" id="btnRegenerarOutline" style="width:100%;margin-top:4px;">Generar otra estructura</button>
+  ` : ""}`;
+}
+
+function attachDivulgacionHandlers(){
+  const sel = document.getElementById("div_formato");
+  if(sel) sel.onchange = () => {
+    state.divulgacion.formato = sel.value;
+    state.divulgacion.outline = null;
+    saveState(); render();
+  };
+  const btn = document.getElementById("btnGenerarOutline");
+  if(btn) btn.onclick = generarOutline;
+  const btnR = document.getElementById("btnRegenerarOutline");
+  if(btnR) btnR.onclick = generarOutline;
+}
+
+async function generarOutline(){
+  const result = await callAgent("divulgacion", {
+    formato: state.divulgacion.formato,
+    idea: state.idea,
+    pregunta: state.pregunta,
+    referencias: state.bibliografia.filter(r=>r.estado==='aceptada').map(r=>r.titulo)
+  });
+  if(result){
+    state.divulgacion.outline = result;
+    saveState();
+  }
+  render();
+}
+
+/* ============ STEP 8: REFLEXIÓN ============ */
+function renderReflexion(){
+  const d = state.reflexion;
+  return `
+  <div class="card">
+    <label>¿Cómo cambió tu idea inicial?</label>
+    <textarea id="r_cambio">${escapeHtml(d.cambio)}</textarea>
+    <label>¿Qué referencia cambió tu manera de pensar?</label>
+    <textarea id="r_referencia">${escapeHtml(d.referencia)}</textarea>
+    <label>¿Qué dificultad encontraste?</label>
+    <textarea id="r_dificultad">${escapeHtml(d.dificultad)}</textarea>
+    <label>¿En qué momento la IA te ayudó a pensar, y en qué momento pudo llevarte por mal camino?</label>
+    <textarea id="r_usoIA">${escapeHtml(d.usoIA)}</textarea>
+  </div>`;
+}
+
+function attachReflexionHandlers(){
+  const map = {r_cambio:"cambio", r_referencia:"referencia", r_dificultad:"dificultad", r_usoIA:"usoIA"};
+  Object.keys(map).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.oninput = () => { state.reflexion[map[id]] = el.value; saveState(); };
+  });
+}
+
+/* ============ HANDLER DISPATCH + NAV BUTTONS ============ */
+function attachStepHandlers(i){
+  const key = STAGES[i].key;
+  const fns = {
+    idea: attachIdeaHandlers,
+    friccion: attachFriccionHandlers,
+    pregunta: attachPreguntaHandlers,
+    mapa: attachMapaHandlers,
+    bibliografia: attachBibliografiaHandlers,
+    mde: attachMdeHandlers,
+    sintesis: attachSintesisHandlers,
+    resultados: attachResultadosHandlers,
+    auditoria: attachAuditoriaHandlers,
+    notas: attachNotasHandlers,
+    divulgacion: attachDivulgacionHandlers,
+    reflexion: attachReflexionHandlers
+  };
+  if(fns[key]) fns[key]();
+
+  const btnBack = document.getElementById("btnBack");
+  if(btnBack) btnBack.onclick = prevStep;
+  const btnHome = document.getElementById("btnHome");
+  if(btnHome) btnHome.onclick = () => { goToStep(-1); };
+  const btnNext = document.getElementById("btnNext");
+  if(btnNext) btnNext.onclick = nextStep;
+  const btnFinish = document.getElementById("btnFinish");
+  if(btnFinish) btnFinish.onclick = showSummary;
+  const btnChangeMode = document.getElementById("btnChangeMode");
+  if(btnChangeMode) btnChangeMode.onclick = () => { goToStep(-1); };
+}
+
+/* ============ SUMMARY ============ */
+function showSummary(){
+  const app = document.getElementById("app");
+  const p = state;
+  app.innerHTML = `
+    ${renderHeader()}
+    <main>
+      <div class="final-card">
+        <h2>Tu proyecto está organizado</h2>
+        <p>Resumen de tu foco, tu evidencia y tus decisiones en Biblioteca Viva.</p>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h3 style="font-size:15px;">Tema</h3>
+        <p>${escapeHtml(p.idea.tema)||"(sin definir)"}</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Pregunta principal</h3>
+        <p>${escapeHtml(p.pregunta.pregunta_principal)||"(sin definir)"}</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Referencias</h3>
+        <p>${p.bibliografia.filter(r=>r.estado==='aceptada').length} aceptadas de ${p.bibliografia.length} añadidas</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Matriz de Decisión</h3>
+        <p>${(p.mde||[]).length} dimensiones de decisión fundamentadas en tu evidencia</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Síntesis de evidencia</h3>
+        <p>${(p.sintesis||[]).length} hallazgos entre consensos, contradicciones y brechas</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Tus resultados</h3>
+        <p>${(p.resultadosPropios||[]).length} resultado(s) propios declarados</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Auditoría de defendibilidad</h3>
+        <p>${p.auditoria ? `${(p.auditoria.senales||[]).length} señales en ${(p.auditoria.cobertura||[]).filter(c=>c.estado==='senales_encontradas').length} de 6 dimensiones` : "Aún no generada (disponible en el informe de evidencia)"}</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Borradores para publicar</h3>
+        <p>${p.borradores ? "Generados: justificación, métodos, comparación y discusión, con tabla comparativa" : "Aún no generados (disponibles en el informe de evidencia)"}</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Formato de divulgación</h3>
+        <p>${escapeHtml(p.divulgacion.formato) || "(sin elegir)"}</p>
+        <div class="divider"></div>
+        <h3 style="font-size:15px;">Búsquedas registradas</h3>
+        <p>${(p.busquedas||[]).length} consulta(s) con su fecha, bases y filtros, en el informe de evidencia</p>
+      </div>
+      <button class="btn btn-accent" id="btnInforme" style="width:100%;margin-bottom:10px;">Abrir informe de evidencia</button>
+      <div class="card" style="margin-bottom:10px;">
+        <h3 style="font-size:15px;margin:0 0 4px 0;">Guardar o mover este proyecto</h3>
+        <p class="hint" style="margin:0 0 10px 0;">Tu progreso vive solo en este navegador y en este dispositivo. Descárgalo como archivo para respaldarlo, seguir en otra computadora o enviárselo a quien te asesora.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="small-btn" id="btnExportProyecto" type="button" style="flex:1;min-width:130px;">Descargar proyecto</button>
+          <button class="small-btn" id="btnImportProyectoTrigger" type="button" style="flex:1;min-width:130px;">Cargar proyecto</button>
+        </div>
+        <input type="file" id="importProyectoFile" accept="application/json,.json" style="display:none;">
+      </div>
+      <button class="btn btn-ghost" id="btnVolverEditar" style="width:100%;margin-bottom:10px;">Volver a editar</button>
+      <button class="btn btn-primary" id="btnNuevoProyecto" style="width:100%;">Empezar un proyecto nuevo</button>
+    </main>
+  `;
+  document.getElementById("btnInforme").onclick = showEvidenceReport;
+  document.getElementById("btnVolverEditar").onclick = () => {
+    const flow = workflowStages();
+    goToStep(flow[flow.length-1]);
+  };
+  document.getElementById("btnNuevoProyecto").onclick = resetProject;
+  document.getElementById("btnExportProyecto").onclick = exportarProyecto;
+  const inputImport = document.getElementById("importProyectoFile");
+  document.getElementById("btnImportProyectoTrigger").onclick = () => inputImport.click();
+  inputImport.onchange = () => {
+    const f = inputImport.files && inputImport.files[0];
+    inputImport.value = "";
+    importarProyecto(f);
+  };
+}
+
+const ESTILOS_CITA = ["APA","ACS","Vancouver"];
+
+function normalizeDoi(doi){
+  return doi ? String(doi).replace(/^https?:\/\/(dx\.)?doi\.org\//i,"") : "";
+}
+
+// Formatea una referencia real según el estilo elegido. Es formateo puro de los
+// metadatos que ya trae la fuente (autores, año, título, revista, DOI): no se
+// inventa nada. El número n al inicio es el mismo que usan los marcadores [n] de
+// los borradores y de la síntesis/MDE, para que el lector pueda mapearlos.
+function formatCitation(r, i, estilo){
+  const n = i + 1;
+  const autores = r.autores || "Autor no disponible";
+  const anio = r.anio || "s.f.";
+  const titulo = r.titulo || "";
+  const revista = r.revista || "";
+  const doi = normalizeDoi(r.doi);
+  const doiTxt = doi ? ` https://doi.org/${doi}` : "";
+  if(estilo === "ACS"){
+    return `(${n}) ${autores}. ${titulo}.${revista?` ${revista}`:""} ${anio}.${doiTxt}`;
+  }
+  if(estilo === "Vancouver"){
+    return `${n}. ${autores}. ${titulo}.${revista?` ${revista}.`:""} ${anio}.${doiTxt}`;
+  }
+  // APA por defecto (autor-fecha). El [n] va como localizador para conectar con los borradores.
+  return `[${n}] ${autores} (${anio}). ${titulo}.${revista?` ${revista}.`:""}${doiTxt}`;
+}
+
+/* ============ INTEROPERABILIDAD: SACAR EL CORPUS DE LA APP ============ */
+// Un corpus curado que no se puede llevar a un gestor de referencias obliga a volver a
+// teclearlo todo. Estos exportadores son formateo puro de los metadatos reales que ya
+// estan en el estado: no llaman a la IA y no pueden inventar nada.
+
+function descargarArchivo(nombre, contenido, mime){
+  const blob = new Blob([contenido], {type: (mime||"text/plain") + ";charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+// Nombre de archivo seguro a partir del tema del proyecto.
+function slugProyecto(){
+  const base = (state.idea.tema || "proyecto").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  return base || "proyecto";
+}
+
+// Autores de una referencia como lista de personas. Prefiere SIEMPRE la lista estructurada
+// que entrego la base de datos; solo cae al heuristico de partir la cadena cuando la
+// referencia se escribio a mano y no hay lista.
+function autoresDeRef(r){
+  if(r && Array.isArray(r.autores_lista) && r.autores_lista.length) return r.autores_lista.slice();
+  return partirAutores(r && r.autores);
+}
+
+// Heuristico de ultimo recurso para referencias escritas a mano. Partir por comas es
+// ambiguo: "Silva, João" puede ser un autor en formato "Apellido, Nombre" o dos autores.
+// Se resuelve a favor de un solo autor cuando hay una sola coma y ambos lados son cortos,
+// que es el caso abrumadoramente mas comun al teclear una cita.
+function partirAutores(autores){
+  const txt = String(autores || "").trim();
+  if(!txt) return [];
+  if(txt.includes(";")){
+    return txt.split(";").map(a=>a.trim()).filter(a=>a && !/^et\.?\s*al\.?$/i.test(a));
+  }
+  const comas = (txt.match(/,/g) || []).length;
+  if(comas === 1){
+    const [a, b] = txt.split(",").map(x=>x.trim());
+    const corto = (s)=>s && s.split(/\s+/).length <= 3;
+    if(corto(a) && corto(b) && !/^et\.?\s*al\.?$/i.test(b)) return [txt];
+  }
+  return txt.split(/,(?![^(]*\))/).map(a=>a.trim()).filter(a=>a && !/^et\.?\s*al\.?$/i.test(a));
+}
+
+function escaparBibtex(v){
+  return String(v || "").replace(/[{}\\]/g, "").replace(/\s+/g, " ").trim();
+}
+
+// Clave de cita estable y legible: primerapellido + anio + primera palabra del titulo.
+function claveBibtex(r, i){
+  const autores = autoresDeRef(r);
+  const apellido = autores.length
+    ? autores[0].split(",")[0].split(/\s+/).pop()
+    : "anon";
+  const palabra = String(r.titulo || "").split(/\s+/).find(w=>w.length > 3) || "ref";
+  const limpia = (s)=>String(s).toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+  return (limpia(apellido) || "anon") + (r.anio || "sf") + (limpia(palabra) || String(i+1));
+}
+
+function toBibTeX(refs){
+  return refs.map((r,i)=>{
+    const campos = [];
+    campos.push(["title", escaparBibtex(r.titulo)]);
+    const autores = autoresDeRef(r);
+    if(autores.length) campos.push(["author", autores.map(escaparBibtex).join(" and ")]);
+    if(r.anio) campos.push(["year", escaparBibtex(r.anio)]);
+    if(r.revista) campos.push(["journal", escaparBibtex(r.revista)]);
+    const doi = normalizeDoi(r.doi);
+    if(doi) campos.push(["doi", doi]);
+    const u = refUrl(r);
+    if(u && !doi) campos.push(["url", u]);
+    if(r.resumen) campos.push(["abstract", escaparBibtex(r.resumen)]);
+    // Nota interna: de donde salio y como se clasifico, para no perder la curaduria.
+    if(r.fuente) campos.push(["note", escaparBibtex("Encontrado via " + r.fuente + (r.perspectiva ? "; componente: " + r.perspectiva : ""))]);
+    const cuerpo = campos.map(([k,v])=>`  ${k} = {${v}}`).join(",\n");
+    return `@article{${claveBibtex(r,i)},\n${cuerpo}\n}`;
+  }).join("\n\n") + "\n";
+}
+
+function toRIS(refs){
+  return refs.map(r=>{
+    const l = [];
+    l.push("TY  - JOUR");
+    autoresDeRef(r).forEach(a=>l.push("AU  - " + a));
+    if(r.titulo) l.push("TI  - " + r.titulo);
+    if(r.anio) l.push("PY  - " + r.anio);
+    if(r.revista) l.push("JO  - " + r.revista);
+    if(r.resumen) l.push("AB  - " + String(r.resumen).replace(/\r?\n/g, " "));
+    const doi = normalizeDoi(r.doi);
+    if(doi) l.push("DO  - " + doi);
+    const u = refUrl(r);
+    if(u) l.push("UR  - " + u);
+    if(r.fuente) l.push("DB  - " + r.fuente);
+    l.push("ER  - ");
+    return l.join("\r\n");
+  }).join("\r\n\r\n") + "\r\n";
+}
+
+function celdaCsv(v){
+  const t = String(v == null ? "" : v).replace(/\r?\n/g, " ");
+  return /[",;]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+
+function toCSV(refs){
+  const cabeceras = ["n","titulo","autores","anio","revista","doi","url","tipo_doc","acceso_abierto","citas","fuente_base","componente","ajuste","estado","aporte_a_mi_investigacion","resumen"];
+  const filas = refs.map((r,i)=>[
+    i+1, r.titulo, r.autores, r.anio, r.revista, normalizeDoi(r.doi), refUrl(r), r.tipo_doc,
+    // "no se sabe" cuando la base no informa acceso abierto, en vez de un falso "no".
+    (r.oa === true ? "si" : r.oa === false ? "no" : "no se sabe"),
+    (typeof r.citas === "number" ? r.citas : ""),
+    r.fuente, r.perspectiva, r.fuerza, r.estado, r.justificacion, r.resumen
+  ].map(celdaCsv).join(","));
+  // BOM para que Excel abra los acentos bien sin pedir nada al usuario.
+  return "\uFEFF" + [cabeceras.join(","), ...filas].join("\r\n") + "\r\n";
+}
+
+// Exporta las referencias aceptadas, o todas si aun no se acepto ninguna, para que el
+// boton nunca entregue un archivo vacio sin explicar por que.
+function refsParaExportar(){
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada");
+  return aceptadas.length ? aceptadas : state.bibliografia.slice();
+}
+
+function exportarCorpus(formato){
+  const refs = refsParaExportar();
+  if(refs.length === 0){ alert("Todavía no tienes referencias en tu bibliografía."); return; }
+  const base = "biblioteca-viva-" + slugProyecto();
+  if(formato === "bibtex") descargarArchivo(base + ".bib", toBibTeX(refs), "application/x-bibtex");
+  else if(formato === "ris") descargarArchivo(base + ".ris", toRIS(refs), "application/x-research-info-systems");
+  else if(formato === "csv") descargarArchivo(base + ".csv", toCSV(refs), "text/csv");
+}
+
+/* ============ LLEVARSE EL PROYECTO COMPLETO ============ */
+// El progreso vive en localStorage, que es del navegador y del dispositivo: quien usa la
+// app por QR en el telefono y luego abre su laptop no encuentra nada. Esto lo hace
+// portable y respaldable, sin necesidad de cuentas ni de servidor.
+function exportarProyecto(){
+  const payload = {
+    _formato: "biblioteca-viva-proyecto",
+    _version: 1,
+    _exportado: new Date().toISOString(),
+    proyecto: state
+  };
+  descargarArchivo("biblioteca-viva-" + slugProyecto() + ".json", JSON.stringify(payload, null, 2), "application/json");
+}
+
+function importarProyecto(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let datos;
+    try{
+      datos = JSON.parse(String(reader.result));
+    }catch(e){
+      alert("Ese archivo no es un proyecto de Biblioteca Viva válido (no se pudo leer como JSON).");
+      return;
+    }
+    const p = datos && datos._formato === "biblioteca-viva-proyecto" ? datos.proyecto : datos;
+    // Validacion minima: tiene que parecerse a un proyecto, no a cualquier JSON.
+    if(!p || typeof p !== "object" || typeof p.idea !== "object" || !Array.isArray(p.bibliografia)){
+      alert("Ese archivo no parece un proyecto de Biblioteca Viva.");
+      return;
+    }
+    if(!confirm("Esto reemplazará el proyecto que tienes abierto ahora. ¿Continuar?")) return;
+    state = p;
+    migrateState();
+    saveState();
+    // Los resultados de busqueda son transitorios y pertenecen a la sesion anterior.
+    searchState = { activo: null, resultados: {}, error: {}, meta: {} };
+    searchControls = {};
+    render();
+  };
+  reader.onerror = () => alert("No se pudo leer el archivo.");
+  reader.readAsText(file);
+}
+
+/* ============ REGISTRO DE BUSQUEDA: PARRAFO DE METODOS ============ */
+// Convierte state.busquedas en un parrafo que se puede pegar en la seccion de metodos.
+// Es formateo de datos reales registrados, no una redaccion del modelo.
+function buildMetodosBusqueda(){
+  const bs = state.busquedas || [];
+  if(bs.length === 0) return "";
+  const fechas = bs.map(b=>String(b.fecha||"").slice(0,10)).filter(Boolean).sort();
+  const basesUsadas = new Set();
+  bs.forEach(b=>Object.entries(b.por_base||{}).forEach(([n,v])=>{ if(v !== null) basesUsadas.add(n); }));
+  const aceptadas = state.bibliografia.filter(r=>r.estado==="aceptada").length;
+  const rango = fechas.length && fechas[0] !== fechas[fechas.length-1]
+    ? `entre el ${fechas[0]} y el ${fechas[fechas.length-1]}`
+    : `el ${fechas[0] || "s.f."}`;
+  const conFiltroAnio = bs.filter(b=>b.filtros && b.filtros.desde_anio);
+  const anioMin = conFiltroAnio.length ? Math.min(...conFiltroAnio.map(b=>b.filtros.desde_anio)) : null;
+  const manuales = bs.filter(b=>b.query_origen === "manual").length;
+  return `La búsqueda bibliográfica se ejecutó ${rango} sobre ${[...basesUsadas].join(", ")}, ` +
+    `mediante ${bs.length} ${bs.length===1?"consulta":"consultas"} distribuidas en ${new Set(bs.map(b=>b.componente)).size} ` +
+    `${new Set(bs.map(b=>b.componente)).size===1?"componente":"componentes"} del trabajo` +
+    (manuales ? `, de las cuales ${manuales} ${manuales===1?"fue formulada":"fueron formuladas"} manualmente por el investigador` : "") +
+    (anioMin ? `, con un límite inferior de año de publicación de ${anioMin}` : "") +
+    `. Los resultados se deduplicaron por DOI y por título normalizado. ` +
+    `De los registros recuperados, ${state.bibliografia.length} se incorporaron a la bibliografía para cribado y ${aceptadas} se aceptaron como evidencia. ` +
+    `El detalle por consulta se conserva en el registro de búsqueda.`;
+}
+
+/* ============ FASE C: BORRADORES PARA PUBLICAR ============ */
+// Genera los borradores citados por sección + tabla comparativa. Hace su propio
+// fetch (no callAgent) porque el informe se dibuja fuera del render() principal;
+// gestiona su propio estado de carga (borradoresState) y vuelve a dibujar el
+// informe al terminar, igual patrón que la extracción de PDF.
+async function generarBorradores(){
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  if(refs.length < 1){ alert("Acepta al menos una referencia para generar borradores."); return; }
+  borradoresState = { activo: true, error: "" };
+  showEvidenceReport();
+  const referencias = refs.map(r=>({
+    titulo:r.titulo, autores:r.autores, anio:r.anio,
+    resumen:r.resumen||"", justificacion:r.justificacion||""
+  }));
+  try{
+    const resp = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({task:"borradores", payload:{
+        idea: state.idea,
+        pregunta: state.pregunta,
+        referencias,
+        sintesis: state.sintesis || [],
+        mde: state.mde || []
+      }})
+    });
+    if(!resp.ok){
+      let msg = "No se pudieron generar los borradores.";
+      try{ const e = await resp.json(); if(e && e.error) msg = e.error; }catch(_){}
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    state.borradores = data.result || null;
+    saveState();
+    borradoresState = { activo: false, error: "" };
+  }catch(e){
+    console.error("Error generando borradores:", e);
+    borradoresState = { activo: false, error: e.message || "No se pudieron generar los borradores. Inténtalo de nuevo." };
+  }
+  showEvidenceReport();
+}
+
+// Bloque de "Borradores para publicar" dentro del informe de evidencia.
+function renderBorradoresReport(){
+  if(borradoresState.activo){
+    return reportSection("Borradores para publicar",
+      `<div class="loading"><div class="spinner"></div> EugenIA está redactando los borradores citados…</div>`);
+  }
+  const b = state.borradores;
+  if(!b){
+    const errHtml = borradoresState.error ? `<p class="hint" style="color:var(--danger);">${escapeHtml(borradoresState.error)}</p>` : "";
+    return reportSection("Borradores para publicar",
+      `<p>Convierte tu evidencia curada en borradores de párrafo citados por sección (justificación, métodos, comparación y discusión) y una tabla comparativa de tus fuentes. Cada afirmación cita las referencias reales por su número. Son un punto de partida para editar, no un texto final.</p>
+       ${errHtml}
+       <button class="btn btn-accent" id="btnGenBorradores" style="width:100%;">Generar borradores para publicar</button>`);
+  }
+  const secciones = [
+    ["Justificación y brecha", b.justificacion],
+    ["Métodos", b.metodos],
+    ["Comparación de resultados", b.comparacion],
+    ["Discusión y contraste", b.discusion]
+  ].map(([t,body])=> body ? `<h3 style="font-size:15px;margin-top:14px;">${t}</h3><p>${escapeHtml(body)}</p>` : "").join("");
+  const filas = (Array.isArray(b.tabla_comparativa)?b.tabla_comparativa:[]).map(row=>
+    `<tr><td>[${escapeHtml(String(row.fuente))}]</td><td>${escapeHtml(row.enfoque||"")}</td><td>${escapeHtml(row.hallazgo_principal||"")}</td><td>${escapeHtml(row.limitacion||"")}</td></tr>`
+  ).join("");
+  const tabla = filas
+    ? `<h3 style="font-size:15px;margin-top:16px;">Tabla comparativa de fuentes</h3><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th>Fuente</th><th>Enfoque</th><th>Hallazgo principal</th><th>Limitación</th></tr></thead><tbody>${filas}</tbody></table></div>`
+    : "";
+  return reportSection("Borradores para publicar",
+    `<p class="hint">Los marcadores [n] remiten al número n de la referencia en la lista de abajo. Revisa y edita cada borrador; verifícalo contra los textos completos antes de publicar.</p>
+     ${secciones}${tabla}
+     <button class="btn btn-ghost" id="btnGenBorradores" style="width:100%;margin-top:12px;">Regenerar borradores</button>`);
+}
+
+function reportSection(title, body){
+  return `<section class="card"><h2 style="font-size:20px;">${title}</h2>${body}</section>`;
+}
+
+// Bloques de "Tus resultados" y "Auditoría de defendibilidad" dentro del informe.
+// A diferencia de los borradores, la auditoría ya se genera y persiste en su propio
+// paso (patrón sintesis/mde), así que aquí solo se lee state.auditoria de forma
+// síncrona, sin estado de carga propio.
+function renderResultadosReport(){
+  const items = state.resultadosPropios || [];
+  if(!items.length) return `<p>No se han declarado resultados propios.</p>`;
+  return `<ul style="padding-left:22px;">${items.map(r=>
+    `<li style="margin-bottom:10px;"><b>${escapeHtml(r.titulo)}</b>${r.hallazgo ? `: ${escapeHtml(r.hallazgo)}` : ""}${r.limitaciones ? ` <span class="hint">(Limitaciones: ${escapeHtml(r.limitaciones)})</span>` : ""}</li>`
+  ).join("")}</ul>`;
+}
+
+function renderAuditoriaReport(){
+  const aud = state.auditoria;
+  if(!aud) return `<p>No se ha generado una auditoría de defendibilidad.</p>`;
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const cobertura = Array.isArray(aud.cobertura) ? aud.cobertura : [];
+  const chips = cobertura.map(c=>{
+    const nombre = DIMENSIONES_AUDITORIA[c.dimension] || c.dimension;
+    const cls = c.estado === "senales_encontradas" ? "chip" : "chip pending";
+    return `<span class="${cls}" title="${escapeAttr(c.nota||"")}">${escapeHtml(nombre)}</span>`;
+  }).join("");
+  const senales = Array.isArray(aud.senales) ? aud.senales : [];
+  const filas = senales.map(sn=>{
+    const prefijo = sn.dimension === "etica" ? "Pregunta a considerar: " : "";
+    return `<div class="finding ${sn.severidad==='alta'?'contradiccion':(sn.severidad==='baja'?'brecha':'')}" style="padding:12px 14px;margin:10px 0;">
+      <div class="finding-label">${escapeHtml(DIMENSIONES_AUDITORIA[sn.dimension]||sn.dimension)} · severidad ${escapeHtml(sn.severidad)}</div>
+      <p><b>${prefijo}${escapeHtml(sn.senal)}</b></p>
+      <p>${escapeHtml(sn.por_que_importa)}</p>
+      <p class="hint">${escapeHtml(sn.ancla_detalle)}${(sn.fuentes&&sn.fuentes.length)?` · Fuentes: ${sn.fuentes.map(n=>`[${n}]`).join(", ")}`:""}</p>
+    </div>`;
+  }).join("") || `<p>No se encontraron señales con base suficiente en la evidencia provista.</p>`;
+  return `<div style="margin-bottom:10px;">${chips}</div>${filas}`;
+}
+
+// Registro de busqueda dentro del informe: la tabla de lo que realmente se busco, mas el
+// parrafo de metodos listo para pegar. Es lo que permite que otra persona (o el propio
+// investigador meses despues) reconstruya como se armo el corpus.
+function renderRegistroBusquedaReport(){
+  const bs = state.busquedas || [];
+  if(!bs.length) return `<p>No hay búsquedas registradas todavía.</p>`;
+  const filas = bs.map(b=>{
+    const bases = Object.entries(b.por_base||{})
+      .map(([n,v])=>`${n}: ${v===null?"no respondió":v}`).join("; ");
+    const f = b.filtros || {};
+    const filtros = [
+      f.desde_anio ? "desde " + f.desde_anio : "",
+      f.tipo === "revision" ? "solo revisiones" : (f.tipo === "primario" ? "sin revisiones" : "")
+    ].filter(Boolean).join(", ") || "ninguno";
+    return `<tr>
+      <td>${escapeHtml(String(b.fecha||"").slice(0,10))}</td>
+      <td>${escapeHtml(b.componente||"")}</td>
+      <td style="font-family:ui-monospace,Consolas,monospace;font-size:12px;">${escapeHtml(b.query||"")}${b.query_ampliada?`<br><span class="hint">ampliada: ${escapeHtml(b.query_ampliada)}</span>`:""}</td>
+      <td>${b.query_origen === "manual" ? "investigador" : "EugenIA"}</td>
+      <td>${escapeHtml(filtros)}</td>
+      <td>${escapeHtml(bases)}</td>
+      <td>${b.mostrados}</td>
+    </tr>`;
+  }).join("");
+  const metodos = buildMetodosBusqueda();
+  return `
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+      <thead><tr><th>Fecha</th><th>Componente</th><th>Consulta</th><th>Origen</th><th>Filtros</th><th>Resultados por base</th><th>Mostrados</th></tr></thead>
+      <tbody>${filas}</tbody>
+    </table></div>
+    ${metodos ? `<div style="margin-top:14px;"><p><b>Párrafo de métodos, listo para adaptar:</b></p><p style="background:var(--soft);border-radius:10px;padding:12px 14px;">${escapeHtml(metodos)}</p></div>` : ""}`;
+}
+
+function showEvidenceReport(){
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const synthesis = (state.sintesis||[]).map(h=>`
+    <div class="finding ${escapeAttr(h.tipo)}" style="padding:12px 14px;margin:10px 0;">
+      <div class="finding-label">${escapeHtml(h.tipo)} · confianza ${escapeHtml(h.confianza)}</div>
+      <p><b>${escapeHtml(h.hallazgo)}</b></p>
+      <p>${escapeHtml(h.implicacion)}</p>
+      <p class="hint">Fuentes: ${(h.fuentes||[]).map(n=>`[${n}]`).join(", ")||"No asignadas"}</p>
+    </div>`).join("") || `<p>No se ha generado una síntesis.</p>`;
+  const matrix = (state.mde||[]).map(d=>`
+    <tr><td>${escapeHtml(d.dimension)}</td><td>${escapeHtml(d.hallazgo_evidencia)}</td><td>${escapeHtml(d.criterio_adoptado)}</td><td>${(d.fuentes||[]).map(n=>`[${n}]`).join(", ")}</td></tr>`).join("");
+  const matrixHtml = matrix ? `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr><th>Dimensión</th><th>Evidencia</th><th>Criterio</th><th>Fuentes</th></tr></thead><tbody>${matrix}</tbody></table></div>` : `<p>No se ha generado una Matriz de Decisión.</p>`;
+  const estilo = ESTILOS_CITA.includes(state.citaEstilo) ? state.citaEstilo : "APA";
+  const bibliography = refs.map((r,i)=>`<li style="margin-bottom:10px;">${escapeHtml(formatCitation(r,i,estilo))}</li>`).join("") || `<li>No hay referencias aceptadas.</li>`;
+  const estiloSelector = refs.length ? `
+    <label style="margin-top:0;">Estilo de cita</label>
+    <select id="citaEstilo" style="max-width:220px;">${ESTILOS_CITA.map(e=>`<option value="${e}" ${estilo===e?'selected':''}>${e}</option>`).join("")}</select>` : "";
+  const app = document.getElementById("app");
+  app.innerHTML = `<main style="padding-bottom:40px;">
+    <div class="final-card"><h1 style="color:#fff;font-size:25px;">Informe de evidencia</h1><p>Biblioteca Viva · EugenIA Lab</p></div>
+    <div class="report-actions">
+      <button class="btn btn-ghost" id="btnBackReport">Volver</button>
+      <button class="btn btn-ghost" id="btnTextReport">Descargar texto</button>
+      <button class="btn btn-primary" id="btnPrintReport">Imprimir / PDF</button>
+    </div>
+    <div class="card" style="margin-bottom:14px;">
+      <h3 style="font-size:15px;margin:0 0 4px 0;">Llévate tu bibliografía</h3>
+      <p class="hint" style="margin:0 0 10px 0;">Exporta las ${refs.length ? refs.length + " referencias aceptadas" : "referencias"} a tu gestor de referencias o a una hoja de cálculo. Son tus metadatos reales, sin pasar por la IA.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="small-btn export-corpus" data-formato="bibtex" type="button" style="flex:1;min-width:110px;">BibTeX (.bib)</button>
+        <button class="small-btn export-corpus" data-formato="ris" type="button" style="flex:1;min-width:110px;">RIS (.ris)</button>
+        <button class="small-btn export-corpus" data-formato="csv" type="button" style="flex:1;min-width:110px;">Tabla (.csv)</button>
+      </div>
+      <p class="hint" style="margin:8px 0 0 0;">BibTeX y RIS los importan Zotero, Mendeley y EndNote. El CSV incluye el ajuste evaluado, el componente y tu justificación de cada fuente.</p>
+    </div>
+    ${reportSection("Foco de investigación", `<p><b>Tema:</b> ${escapeHtml(state.idea.tema)}</p><p><b>Pregunta:</b> ${escapeHtml(state.pregunta.pregunta_principal)}</p><p><b>Objetivo:</b> ${escapeHtml(state.pregunta.objetivo_general)||"No definido"}</p>`)}
+    ${reportSection("Síntesis de evidencia", synthesis)}
+    ${reportSection("Matriz de Decisión", matrixHtml)}
+    ${renderBorradoresReport()}
+    ${reportSection("Tus resultados", renderResultadosReport())}
+    ${reportSection("Auditoría de defendibilidad", renderAuditoriaReport())}
+    ${reportSection("Referencias aceptadas", `${estiloSelector}<ul style="list-style:none;padding-left:0;margin-top:12px;">${bibliography}</ul>`)}
+    ${reportSection("Registro de búsqueda", renderRegistroBusquedaReport())}
+    <p class="hint">Análisis generado a partir de títulos y resúmenes disponibles. Debe verificarse contra los textos completos antes de publicación o toma de decisiones definitiva.</p>
+  </main>`;
+  document.querySelectorAll("th,td").forEach(el=>{el.style.border="1px solid #DCE5D5";el.style.padding="8px";el.style.textAlign="left";el.style.verticalAlign="top";});
+  document.getElementById("btnBackReport").onclick = showSummary;
+  document.getElementById("btnPrintReport").onclick = () => window.print();
+  document.getElementById("btnTextReport").onclick = downloadEvidenceReport;
+  document.querySelectorAll(".export-corpus").forEach(b=>{
+    b.onclick = () => exportarCorpus(b.dataset.formato);
+  });
+  const btnGenBorr = document.getElementById("btnGenBorradores");
+  if(btnGenBorr) btnGenBorr.onclick = generarBorradores;
+  const selEstilo = document.getElementById("citaEstilo");
+  if(selEstilo) selEstilo.onchange = () => { state.citaEstilo = selEstilo.value; saveState(); showEvidenceReport(); };
+  window.scrollTo(0,0);
+}
+
+function downloadEvidenceReport(){
+  const refs = state.bibliografia.filter(r=>r.estado==="aceptada");
+  const lines = [
+    "INFORME DE EVIDENCIA | BIBLIOTECA VIVA",
+    "", `Tema: ${state.idea.tema}`, `Pregunta: ${state.pregunta.pregunta_principal}`,
+    `Objetivo: ${state.pregunta.objetivo_general||"No definido"}`, "", "SÍNTESIS DE EVIDENCIA"
+  ];
+  (state.sintesis||[]).forEach(h=>lines.push(`\n${h.tipo.toUpperCase()} | Confianza ${h.confianza}\n${h.hallazgo}\nImplicación: ${h.implicacion}\nFuentes: ${(h.fuentes||[]).map(n=>`[${n}]`).join(", ")}`));
+  lines.push("", "MATRIZ DE DECISIÓN");
+  (state.mde||[]).forEach(d=>lines.push(`\n${d.dimension}\nEvidencia: ${d.hallazgo_evidencia}\nCriterio: ${d.criterio_adoptado}\nFuentes: ${(d.fuentes||[]).map(n=>`[${n}]`).join(", ")}`));
+  const b = state.borradores;
+  if(b){
+    lines.push("", "BORRADORES PARA PUBLICAR");
+    if(b.justificacion) lines.push(`\nJustificación y brecha:\n${b.justificacion}`);
+    if(b.metodos) lines.push(`\nMétodos:\n${b.metodos}`);
+    if(b.comparacion) lines.push(`\nComparación de resultados:\n${b.comparacion}`);
+    if(b.discusion) lines.push(`\nDiscusión y contraste:\n${b.discusion}`);
+    if(Array.isArray(b.tabla_comparativa) && b.tabla_comparativa.length){
+      lines.push("", "Tabla comparativa de fuentes");
+      b.tabla_comparativa.forEach(row=>lines.push(`[${row.fuente}] Enfoque: ${row.enfoque||"-"} | Hallazgo: ${row.hallazgo_principal||"-"} | Limitación: ${row.limitacion||"-"}`));
+    }
+  }
+  const propios = state.resultadosPropios || [];
+  lines.push("", "TUS RESULTADOS");
+  if(propios.length){
+    propios.forEach(r=>lines.push(`\n${r.titulo}${r.hallazgo?`\nHallazgo: ${r.hallazgo}`:""}${r.limitaciones?`\nLimitaciones: ${r.limitaciones}`:""}`));
+  } else {
+    lines.push("No se han declarado resultados propios.");
+  }
+  const aud = state.auditoria;
+  lines.push("", "AUDITORÍA DE DEFENDIBILIDAD");
+  if(aud){
+    (aud.cobertura||[]).forEach(c=>lines.push(`${DIMENSIONES_AUDITORIA[c.dimension]||c.dimension}: ${c.estado} (${c.nota})`));
+    (aud.senales||[]).forEach(sn=>lines.push(`\n[${DIMENSIONES_AUDITORIA[sn.dimension]||sn.dimension} | severidad ${sn.severidad}] ${sn.dimension==='etica'?'Pregunta a considerar: ':''}${sn.senal}\nPor qué importa: ${sn.por_que_importa}\nAncla: ${sn.ancla_detalle}${(sn.fuentes&&sn.fuentes.length)?` | Fuentes: ${sn.fuentes.map(n=>`[${n}]`).join(", ")}`:""}`));
+  } else {
+    lines.push("No se ha generado una auditoría de defendibilidad.");
+  }
+  const estilo = ESTILOS_CITA.includes(state.citaEstilo) ? state.citaEstilo : "APA";
+  lines.push("", `REFERENCIAS (${estilo})`);
+  refs.forEach((r,i)=>lines.push(formatCitation(r,i,estilo)));
+  const bs = state.busquedas || [];
+  lines.push("", "REGISTRO DE BÚSQUEDA");
+  if(bs.length){
+    bs.forEach(b=>{
+      const bases = Object.entries(b.por_base||{})
+        .map(([n,v])=>`${n}: ${v===null?"no respondió":v}`).join("; ");
+      const f = b.filtros || {};
+      const filtros = [
+        f.desde_anio ? "desde " + f.desde_anio : "",
+        f.tipo === "revision" ? "solo revisiones" : (f.tipo === "primario" ? "sin revisiones" : "")
+      ].filter(Boolean).join(", ") || "ninguno";
+      lines.push(`\n${String(b.fecha||"").slice(0,10)} | ${b.componente}`);
+      lines.push(`Consulta (${b.query_origen === "manual" ? "investigador" : "EugenIA"}): ${b.query}`);
+      if(b.query_ampliada) lines.push(`Consulta ampliada: ${b.query_ampliada}`);
+      lines.push(`Filtros: ${filtros}`);
+      lines.push(`Resultados por base: ${bases} | mostrados: ${b.mostrados}`);
+    });
+    const metodos = buildMetodosBusqueda();
+    if(metodos) lines.push("", "Párrafo de métodos, listo para adaptar:", metodos);
+  } else {
+    lines.push("No hay búsquedas registradas.");
+  }
+  lines.push("", "Nota: análisis basado en títulos y resúmenes disponibles; verificar con los textos completos.");
+  const blob = new Blob([lines.join("\n")], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "informe-evidencia-biblioteca-viva.txt";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* ============ UTILS ============ */
+function escapeHtml(str){
+  if(!str) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function escapeAttr(str){
+  if(!str) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+}
+
+/* ============ INIT ============ */
+loadState();
+</script>
+</body>
+</html>

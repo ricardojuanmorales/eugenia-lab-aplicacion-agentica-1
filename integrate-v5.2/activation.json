@@ -1,0 +1,41 @@
+{
+  "framework_version": "5.2.0",
+  "module": "INTEGRATE",
+  "mode": "parallel_non_invasive_poc",
+  "profiles": {
+    "PH": "active",
+    "IT": "active",
+    "AT": "active"
+  },
+  "maturity": {
+    "project_target": "N3",
+    "ecosystem_target": "N4",
+    "project_evidence_status": "pending_validation",
+    "product_level": "pending_evidence",
+    "autonomy_level": "pending_evidence",
+    "N4_gate": "blocked_until_evidence_and_human_approval"
+  },
+  "execution": {
+    "enabled": false,
+    "dry_run": true,
+    "production_write": false,
+    "auto_merge": false
+  },
+  "active_documentation": true,
+  "source": {
+    "repository": "mreyesg/eugenia-lab-biva",
+    "branch": "master",
+    "tree_sha": "919a3a5cdfd85b789d9adeb7ffb8e19ea69dc4a1",
+    "snapshot": "partial_verified_text_code",
+    "full_clone": false
+  },
+  "destination": {
+    "repository": "ricardojuanmorales/eugenia-lab-aplicacion-agentica-1",
+    "branch": "poc/biva-source-verified-integrate-v52-n3-n4",
+    "application_untouched": true
+  },
+  "authors": [
+    "Manuel de J. Reyes Guzmán, Ph.D.",
+    "Ricardo Juan Morales De Jesús, Ph.D."
+  ]
+}
