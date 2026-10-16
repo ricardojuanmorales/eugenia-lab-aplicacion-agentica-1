@@ -1,1 +1,82 @@
-# eugenia-lab-aplicacion-agentica-1
+# 🌐 EugenIA Lab · Biblioteca Viva + INTEGRATE V5.2
+## El caleidoscopio de una investigación defendible
+
+**Evidencia · creación · tecnología · memoria · transferencia**
+
+> Un proyecto de investigación no necesita abandonar su identidad para dialogar con un Framework. En esta prueba, Biblioteca Viva permanece reconocible y el Framework llega como acompañante trazable, reversible y gobernado por personas.
+
+## 🚪 Puertas de entrada
+- 📚 [BIVA original](https://github.com/mreyesg/eugenia-lab-biva)
+- 🧪 [Rama de montaje experimental](https://github.com/ricardojuanmorales/eugenia-lab-aplicacion-agentica-1/tree/poc/biva-source-verified-integrate-v52-n3-n4)
+- 🧬 [Framework Genérico 5.2.0](https://github.com/ricardojuanmorales/framework-proyecto-generico-ia-1)
+- 🌐 [Aplicación BIVA de referencia](https://web-beta-hazel-49.vercel.app)
+- 🗂️ [Configuración INTEGRATE](integrate-v5.2/activation.json) · [Bitácora](integrate-v5.2/bitacora.md) · [Guía del montaje](integrate-v5.2/README.md)
+
+```text
+framework: 5.2.0
+module: INTEGRATE
+integration: PARALLEL_NON_INVASIVE
+lenses: [PH, IT, AT]
+target_maturity: [N3, N4]
+maturity_evidence: PENDING
+documentation: ACTIVE
+source_preservation: REQUIRED
+production_deployment: FALSE
+```
+
+## 🧭 Un problema al centro, tres lentes para interrogarlo
+
+BIVA busca fortalecer el trabajo científico mediante búsqueda bibliométrica evaluada, síntesis de evidencia, matriz de decisión y orientación hacia una investigación defendible. La intervención del Framework no sustituye la curaduría ni la decisión del investigador.
+
+| Lente activa | Pregunta orientadora | Acción en esta POC |
+|---|---|---|
+| 🔵 **PH · Programador Humanista** | ¿Cómo construirlo responsablemente? | Aislamiento, arquitectura, seguridad y accesibilidad |
+| 🟢 **IT · Investigador Transdisciplinario** | ¿Qué sabemos y cómo lo sabemos? | Procedencia, evidencias reales, límites de inferencia y DOI |
+| 🟠 **AT · Artista Transdisciplinario** | ¿Qué otras formas revelan el problema? | Visualización, experiencia, narrativas e investigación-creación |
+
+Las lentes no son agentes autónomos ni estatus acreditados por declararlos activos. Son perspectivas funcionales que deben producir evidencia y registrar discrepancias.
+
+## 🧬 Nivel N3 / N4: aspiración gobernada
+
+- **N3, objetivo de proyecto:** demostrar integración avanzada, trabajo replicable, controles, pruebas y decisiones documentadas.
+- **N4, objetivo de ecosistema:** justificar continuidad, gobernanza, capacidad de transferencia, mantenimiento y recuperación con evidencia real.
+- **Estado verificado:** no se atribuye N3 ni N4 como logro. Se configuran como metas sujetas a evaluación humana. El producto y la autonomía se evalúan separadamente.
+
+> Meta declarada ≠ capacidad demostrada.
+
+## 🏗️ Montaje sin invasión
+
+```text
+biva-source-snapshot/
+  web/                       Núcleo de BIVA copiado desde master
+  scripts/                   Verificador heredado
+integrate-v5.2/
+  activation.json            Tres lentes y objetivos N3/N4
+  README.md                  Protocolo de aislamiento
+  bitacora.md                Memoria activa
+```
+
+**Proveniencia:** `mreyesg/eugenia-lab-biva`, rama `master`, árbol `919a3a5cdfd85b789d9adeb7ffb8e19ea69dc4a1`. Se ha importado un **snapshot parcial del núcleo web**; no se debe confundir con un clon íntegro del repositorio, ni con un despliegue funcional certificado. Los materiales binarios, otros recursos y la historia Git completa siguen pendientes. El origen no fue modificado.
+
+### Protocolos de esta demostración
+1. Preservar el código fuente y registrar toda diferencia.
+2. Mantener la configuración `dry_run` aislada de los servicios existentes.
+3. Verificar PH, IT y AT con evidencias diferentes y trazables.
+4. Registrar las decisiones, límites y hallazgos en la bitácora.
+5. Exigir pruebas antes de acreditar N3, y gobernanza y transferencia antes de N4.
+6. Nunca inventar citas ni reemplazar decisiones científicas humanas.
+
+## 👥 Autoría y responsabilidad
+
+**Manuel de J. Reyes Guzmán, Ph.D.** y **Ricardo Juan Morales De Jesús, Ph.D.**
+
+Esta prueba de concepto utiliza el Framework como entorno de contraste, no como certificación científica ni como autorización para distribuir recursos de terceros. No se han transferido credenciales ni se ha modificado la aplicación desplegada.
+
+## ♻️ Memoria y evolución
+
+```text
+SITUAR → CONTRASTAR (PH + IT + AT) → ACTUAR
+   → DOCUMENTAR → VERIFICAR → TRANSFERIR → REVISAR ↺
+```
+
+*La documentación permanece abierta y versionada. La hipótesis puede evolucionar; la procedencia no debe perderse.*
