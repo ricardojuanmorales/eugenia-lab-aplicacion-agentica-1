@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "framework_version": "5.2.0",
+  "package_version": "0.1.1",
+  "project_id": "eugenia-biva-integrate-v52-model-poc-20261016",
+  "project_name": "EugenIA Lab Biblioteca Viva | INTEGRATE V5.2 POC modelo",
+  "mode": "INTEGRATE",
+  "status": "review",
+  "enabled": false,
+  "dry_run": true,
+  "isolated": true,
+  "repository_url": "https://github.com/ricardojuanmorales/eugenia-lab-aplicacion-agentica-1",
+  "source_repository_url": "https://github.com/mreyesg/eugenia-lab-biva",
+  "application_url": "https://web-beta-hazel-49.vercel.app",
+  "authors": [
+    "Manuel de J. Reyes Guzmán, Ph.D.",
+    "Ricardo Juan Morales De Jesús, Ph.D."
+  ],
+  "active_profiles": [
+    "PH",
+    "IT"
+  ],
+  "latent_profiles": [
+    "AT"
+  ],
+  "provisional_level": "N1",
+  "preservation_rule": "preserve_source",
+  "gates": [
+    "revisión humana",
+    "sin cambios en producción",
+    "sin importación automática",
+    "sin bibliografía simulada presentada como real"
+  ],
+  "origin_verified": false,
+  "source_code_cloned": false,
+  "activation_scope": "configuración aislada en rama de prueba"
+}
