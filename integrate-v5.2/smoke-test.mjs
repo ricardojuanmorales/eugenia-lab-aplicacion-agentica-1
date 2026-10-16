@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { createIntegrateSession } from './adapter.mjs';
+const baseline = createIntegrateSession();
+assert.equal(baseline.enabled, false);
+assert.equal(baseline.status, 'inactive');
+assert.equal(baseline.isolated, true);
+const test = createIntegrateSession({ enabled: true });
+assert.equal(test.status, 'simulated');
+assert.equal(test.dryRun, true);
+assert.throws(() => createIntegrateSession({ enabled: true, dryRun: false }));
+console.log('PASS: INTEGRATE V5.2 aislado, reversible y sin ejecución real');
