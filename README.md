@@ -5,6 +5,45 @@
 
 > Un proyecto de investigación no necesita abandonar su identidad para dialogar con un Framework. En esta prueba, Biblioteca Viva permanece reconocible y el Framework llega como acompañante trazable, reversible y gobernado por personas.
 
+## 📍 Estado de situación · INTEGRATE V5.2
+**Corte documental: 16 de octubre de 2026 · Repositorio modelo / rama `main`**
+
+> **Estado general: MONTAJE INTEGRADO · ACTIVACIÓN FUNCIONAL PENDIENTE.** El código y la configuración de demostración están versionados en `main`. Esto no significa que el motor INTEGRATE esté ejecutándose, que exista un despliegue del modelo ni que los niveles N3/N4 estén acreditados.
+
+| Dimensión | Estado verificable | Evidencia / condición |
+|---|---|---|
+| Montaje en `main` | ✅ Incorporado | [PR #2 fusionado](https://github.com/ricardojuanmorales/eugenia-lab-aplicacion-agentica-1/pull/2), commit `258ea619ad9feccae6a064cb62c263dc39471cfd` |
+| Fuente BIVA | 🟡 Copia parcial | Nueve archivos en [`biva-source-snapshot/`](biva-source-snapshot/); **no** es un clon completo |
+| Integración paralela | ✅ Configurada | [`activation.json`](integrate-v5.2/activation.json), sin intervención del origen |
+| Lentes PH · IT · AT | ✅ Tres declaradas activas | Falta demostrar y documentar su operación y resultados |
+| Ejecución efectiva | ⚪ Desactivada | `enabled: false`, `dry_run: true`, `production_write: false` |
+| Documentación | ✅ Habilitada | [Bitácora](integrate-v5.2/bitacora.md) y [guía](integrate-v5.2/README.md); mantenerlas al día requiere registrar cada ejecución |
+| N3 · integración avanzada | 🟡 Meta declarada | Validación técnica, trazabilidad, pruebas reproducibles y aprobación humana pendientes |
+| N4 · ecosistema gobernado | 🔒 No acreditado | Evidencia de gobernanza, recuperación, continuidad y transferencia pendiente |
+| Pruebas del snapshot | ⚪ No ejecutadas en esta integración | El script está disponible; no hay resultados verificables de ejecución |
+| Despliegue del modelo | ⚪ No realizado | La aplicación BIVA de referencia es independiente de este repositorio |
+
+### 🚦 Semáforo de activación
+```text
+CÓDIGO EN MAIN     [██████████]  incorporado
+LENTES PH / IT / AT [CONFIGURADAS] declaradas activas
+EJECUCIÓN          [DETENIDA]    enabled=false / dry_run=true
+MADUREZ N3         [OBJETIVO]    evaluación pendiente
+MADUREZ N4         [OBJETIVO]    evaluación y gobernanza pendientes
+```
+*Este semáforo representa estados discretos documentados, no porcentajes de avance, resultados de pruebas ni niveles certificados.*
+
+### 🔍 Próximas puertas de validación
+1. **Integridad de la copia:** inventariar y contrastar el repositorio BIVA original completo, incluidas dependencias, documentos y recursos excluidos; resolver la autorización/licencia aplicable.
+2. **PH:** ejecutar pruebas controladas del núcleo web y de aislamiento, registrar resultados, dependencias, seguridad y posibilidad de reversión.
+3. **IT:** comprobar la trazabilidad del corpus y de los DOI, la consistencia de las afirmaciones y la decisión humana sobre las referencias.
+4. **AT:** demostrar una intervención de investigación-creación o visualización que transforme la lectura del problema; documentar evaluación y accesibilidad.
+5. **INTEGRATE y niveles:** ejecutar una importación/activación compatible en un entorno aislado, registrar evidencias, evaluar N3 y posteriormente someter N4 a gobernanza y aprobación explícita.
+
+**Cadena de evidencia:** [configuración](integrate-v5.2/activation.json) → [guía de montaje](integrate-v5.2/README.md) → [bitácora](integrate-v5.2/bitacora.md) → pruebas y decisiones humanas.
+
+---
+
 ## 🚪 Puertas de entrada
 - 📚 [BIVA original](https://github.com/mreyesg/eugenia-lab-biva)
 - 🧪 [Rama de montaje experimental](https://github.com/ricardojuanmorales/eugenia-lab-aplicacion-agentica-1/tree/poc/biva-source-verified-integrate-v52-n3-n4)
