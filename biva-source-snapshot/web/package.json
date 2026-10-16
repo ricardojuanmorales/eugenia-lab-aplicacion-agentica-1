@@ -1,0 +1,13 @@
+{
+  "name": "biblioteca-viva",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "App agentic de 8 etapas de EugenIA Lab (Biblioteca Viva). Frontend estatico + una funcion serverless que hace de proxy seguro hacia la API de Claude.",
+  "engines": {
+    "node": "22.x"
+  },
+  "devDependencies": {
+    "vercel": "^54.0.0"
+  }
+}
