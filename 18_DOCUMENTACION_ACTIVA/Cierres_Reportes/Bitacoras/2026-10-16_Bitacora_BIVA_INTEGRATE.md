@@ -14,3 +14,14 @@
 | 2026-10-16 | [H] | Se solicita estructura documental según necesidad y bitácora canónica | Instrucción de responsable en sesión | Verificación GitHub de esta reorganización |
 
 **Convenciones:** [F] hecho constatado, [H] decisión humana, [I] interpretación, [P] propuesta, [NV] no verificado. Agregar entradas; no borrar ni cambiar la calificación sin rectificación explícita.
+
+## Adenda 2026-10-16 · Adopción del cierre fuerte
+
+| Fecha | Tipo | Evento | Evidencia | Estado/deuda |
+|---|---|---|---|---|
+| 2026-10-16 | [H] | El responsable solicita integrar el protocolo de cierre fuerte a procedimientos, bitácora y canon metodológico local | Instrucción explícita en sesión | Adoptado solo para ámbito BIVA/INTEGRATE |
+| 2026-10-16 | [F] | Se publica el documento metodológico local PM-CFC-BIVA-v1.0.0 | [Protocolo local](../../Metodologia/PM-CFC-BIVA-v1.0.0.md) | No equivale a canon maestro ni P-CFC de EME |
+| 2026-10-16 | [F] | Se produce cierre fuerte aplicado y paquete portable con manifiesto SHA-256, custodiados fuera del repositorio público | Expediente CFC-BIVA-INTEGRATE-20261016-02 | Publicación integral no autorizada por este hecho |
+| 2026-10-16 | [NV] | Integración funcional, evaluación N3/N4 y TSR independiente no realizadas | activation.json y deudas del expediente | Auditoría Node 22, permisos y pruebas futuras |
+
+**Deuda pagada:** procedimiento metodológico local, asiento histórico y cierre documental. **Deuda heredada:** licencias, pruebas, PR #1, N3/N4, TSR. **Deuda nueva:** contrastar con texto íntegro del protocolo EME antes de elevar al Framework central. **Gate humano pendiente:** publicación del informe histórico integral.
